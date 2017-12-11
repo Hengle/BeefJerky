@@ -24,7 +24,7 @@ public abstract class SingletonMonoBehaviour<T> : MonoBehaviour where T : MonoBe
         if (this != Instance) {
             Destroy(this);
 
-            Debug.LogError("既に" + typeof(T) + "が存在したため、" + gameObject + "の" + typeof(T) + "削除されました");
+            Debug.LogError("既に" + typeof(T) + "が存在したため、" + gameObject + "の" + typeof(T) + "が削除されました");
         }
     }
 }

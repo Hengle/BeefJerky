@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// ステージのマネージャーClass
 /// </summary>
-public abstract class StageManager : SingletonMonoBehaviour {
+public class StageManager : SingletonMonoBehaviour<StageManager> {
     public StageChip[][] Stage;//ステージ配列
     [SerializeField]
     private int x, y;//Stageの大きさ
