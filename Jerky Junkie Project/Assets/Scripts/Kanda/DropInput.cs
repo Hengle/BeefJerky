@@ -7,12 +7,12 @@ public class DropInput : MonoBehaviour {
 	bool InputFlg,ChangeFlg;
 
 	CharacterManager CharaManager;
-	List<GameObject> SaveObj;
+	List<CharacterData> SaveObj;
 
 	// Use this for initialization
 	void Start () {
 		InputFlg = ChangeFlg = false;
-		SaveObj = new List<GameObject> ();
+		SaveObj = new List<CharacterData> ();
 		CharaManager = GameObject.Find ("CharacterManager").GetComponent<CharacterManager> ();
 	}
 	
@@ -32,7 +32,7 @@ public class DropInput : MonoBehaviour {
 						for (int i = 0; i < CharaManager.CharacterInstance.GetLength (0); i++) {
 							for (int j = 0; j < CharaManager.CharacterInstance.GetLength (1); j++) {
 								if (CharaManager.CharacterInstance [i, j].m_CharacterSprite.GetInstanceID () == l_hit.collider.gameObject.GetInstanceID ()) {
-									SaveObj.Add (CharaManager.CharacterInstance [i, j].m_CharacterSprite);
+									SaveObj.Add (CharaManager.CharacterInstance [i, j]);
 									InputFlg = true;
 									break;
 								} 
@@ -40,11 +40,12 @@ public class DropInput : MonoBehaviour {
 						}
 					} else {
 						if (SaveObj.Count != 0 && !ChangeFlg) {
-							if (SaveObj [0].GetInstanceID () != l_hit.collider.gameObject.GetInstanceID ()) {
+							if (SaveObj [0].m_CharacterSprite.GetInstanceID () != l_hit.collider.gameObject.GetInstanceID ()) {
 								for (int i = 0; i < CharaManager.CharacterInstance.GetLength (0); i++) {
 									for (int j = 0; j < CharaManager.CharacterInstance.GetLength (1); j++) {
 										if (CharaManager.CharacterInstance [i, j].m_CharacterSprite.GetInstanceID () == l_hit.collider.gameObject.GetInstanceID ()) {
-											CharaManager.DirectionObjMove (SaveObj [0], CharaManager.CharacterInstance [i, j].m_CharacterSprite);
+											CharaManager.DirectionObjMove (SaveObj [0].m_CharacterSprite, CharaManager.CharacterInstance [i, j].m_CharacterSprite);
+											CharaManager.search (CharaManager.CharacterInstance [i, j].m_SpriteNum, ref SaveObj, i, j);
 											ChangeFlg = true;
 										}
 									}
@@ -59,7 +60,15 @@ public class DropInput : MonoBehaviour {
 		}
 		if (Input.GetMouseButtonUp (0)) {
 			InputFlg = ChangeFlg = false;
-			SaveObj.Clear ();
+			//SaveObj.Clear ();
 		}
+		if (Input.GetMouseButtonUp (1)) {
+			foreach (CharacterData data in SaveObj)
+				Debug.Log (data.m_SpriteNum);
+			CharaManager.RootDestoryInstance (ref SaveObj);
+
+		}
+
+		Debug.Log (SaveObj.Count);
 	}
 }

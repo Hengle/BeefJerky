@@ -10,15 +10,16 @@ enum direction
 	Down
 }
 
+[System.Serializable]
+internal struct CharacterData
+{
+	public GameObject m_CharacterSprite;
+	public string m_SpriteName;
+	internal int m_SpriteNum;
+}
+
 public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
 
-	[System.Serializable]
-	internal struct CharacterData
-	{
-		public GameObject m_CharacterSprite;
-		public string m_SpriteName;
-		internal int m_SpriteNum{ get; set; }
-	}
 
 	[SerializeField]
 	int xLength = 8;
@@ -26,6 +27,7 @@ public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
 	int yLength = 8;
 
 	int DestroyCount = 0;
+	int searchX,searchY;
 
 	float Width;
 	float Height;
@@ -56,6 +58,7 @@ public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
 
 		for (int i = 0; i < CharaData.Length; i++) {
 			CharaNum [CharaData [i].m_SpriteName] = i;
+			CharaData [i].m_SpriteNum = CharaNum [CharaData [i].m_SpriteName];
 		}
 
 
@@ -99,44 +102,96 @@ public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
 	// つながっていれば削除する処理
 	void RootDestroy()
 	{
-		// 探す
-		for (int i = 0; i < CharacterInstance.GetLength (0); i++) {
-			for (int j = 0; j < CharacterInstance.GetLength (1); j++) {
-				while (RootFlg (i, j)) {
-					DestroyCount++;
-					quere.Add (CharacterInstance [i, j].m_CharacterSprite);
-					CharacterInstance [i, j].m_SpriteNum = CharaData.Length + 1;
-
-				}
-			}
-		}
+//		// 探す
+//		for (int i = 0; i < CharacterInstance.GetLength (0); i++) {
+//			for (int j = 0; j < CharacterInstance.GetLength (1); j++) {
+//				while (RootFlg (i, j)) {
+//					DestroyCount++;
+//					quere.Add (CharacterInstance [i, j].m_CharacterSprite);
+//					CharacterInstance [i, j].m_SpriteNum = CharaData.Length + 1;
+//
+//				}
+//			}
+//		}
 	}
 
-	bool RootFlg(int i, int j)
+
+	internal void search(int num, ref List<CharacterData> objList,int x,int y)
 	{
-		bool l_RootFlg;
-//
-//		if((i != 0 && CharacterInstance [i, j].m_SpriteNum == CharacterInstance [i - 1, j].m_SpriteNum))
-//		{
-//			DestroyCount++;
+		
+//		var s(int x,int y) => {
+//			if (!objList.Find (CharacterInstance [x != 0? x + direction : 0, y].m_CharacterSprite)) {
+//				objList.Add (CharacterInstance [x != 0? x + direction : 0, y].m_CharacterSprite);
+//				search (objList, x != 0? x + direction : 0, y);
+//			}
 //		}
-//		(i != CharacterInstance.GetLength (0) - 1 && CharacterInstance [i + 1, j].m_SpriteNum == CharacterInstance [i, j + 1].m_SpriteNum) ||
-//		(j != 0 && CharacterInstance [i, j].m_SpriteNum == CharacterInstance [i, j - 1].m_SpriteNum) ||
-//		(j != CharacterInstance.GetLength (0) - 1 && CharacterInstance [i, j + 1].m_SpriteNum == CharacterInstance [i, j + 1].m_SpriteNum))
-//
-		return l_RootFlg;
+			/*((int x,int y)=>
+			if (!objList.Find (CharacterInstance [x != 0? x + direction : 0, y].m_CharacterSprite)) {
+			objList.Add (CharacterInstance [x != 0? x + direction : 0, y].m_CharacterSprite);
+			search (objList, x != 0? x + direction : 0, y);
+		})*/
+		int direction = -1;
+		int _x,_y;
+		// 上探索
+		_x = x != 0? x + direction : 0;
+		if (CharacterInstance [_x, y].m_SpriteNum != CharaData.Length + 1) {
+			CharacterData up = objList.Find (z => z.m_CharacterSprite.GetInstanceID () == CharacterInstance [_x, y].m_CharacterSprite.GetInstanceID ());
+			if (up.m_CharacterSprite == null && CharacterInstance [_x, y].m_SpriteNum == num) {
+				DestroyCount++;
+				objList.Add (CharacterInstance [_x, y]);
+				search (num, ref objList, _x, y);
+			}
+		}
+		// 左探索
+		_y = y != 0? y + direction : 0;
+		if (CharacterInstance [x, _y].m_SpriteNum != CharaData.Length + 1) {
+			CharacterData left = objList.Find (z => z.m_CharacterSprite.GetInstanceID () == CharacterInstance [x, _y].m_CharacterSprite.GetInstanceID ());
+			if (left.m_CharacterSprite == null && CharacterInstance [x, _y].m_SpriteNum == num) {
+				DestroyCount++;
+				objList.Add (CharacterInstance [x, _y]);
+				search (num,ref objList, x, _y);
+			}
+		}
+
+		direction *= -1;
+		// 下探索
+		_x = x != CharacterInstance.GetLength(0) - 1? x + direction : CharacterInstance.GetLength(0) - 1;
+		if (CharacterInstance [_x, y].m_SpriteNum != CharaData.Length + 1) {
+			CharacterData down = objList.Find (z => z.m_CharacterSprite.GetInstanceID () == CharacterInstance [_x, y].m_CharacterSprite.GetInstanceID ());
+			if (down.m_CharacterSprite == null && CharacterInstance [_x, y].m_SpriteNum == num) {
+				DestroyCount++;
+				objList.Add (CharacterInstance [_x, y]);
+				search (num,ref objList, _x, y);
+			}
+		}
+		// 右探索
+		_y = y != CharacterInstance.GetLength(1) - 1? y + direction : CharacterInstance.GetLength(1) - 1;
+		if (CharacterInstance [x,_y].m_SpriteNum != CharaData.Length + 1) {
+			CharacterData right = objList.Find (z => z.m_CharacterSprite.GetInstanceID () == CharacterInstance [x, _y].m_CharacterSprite.GetInstanceID ());
+			if (right.m_CharacterSprite == null && CharacterInstance [x, _y].m_SpriteNum == num) {
+				DestroyCount++;
+				objList.Add (CharacterInstance [x, _y]);
+				search (num,ref objList, x, _y);
+			}
+		}
+
+	}
+
+	private void CheckSpriteNum(int y,int x){
 	}
 
 	public void CreateCharaInstance_No(int Chara_Num,int x_Num,int y_Num,Vector2 vec2Pos)
 	{
-		CharacterInstance [x_Num,y_Num].m_CharacterSprite = GameObject.Instantiate(CharaData [Chara_Num].m_CharacterSprite,new Vector3(vec2Pos.x,vec2Pos.y,0),Quaternion.identity) as GameObject;
+		if(!CharacterInstance [x_Num,y_Num].m_CharacterSprite)
+			CharacterInstance [x_Num,y_Num].m_CharacterSprite = GameObject.Instantiate(CharaData [Chara_Num].m_CharacterSprite,new Vector3(vec2Pos.x,vec2Pos.y,0),Quaternion.identity) as GameObject;
 		CharacterInstance [x_Num, y_Num].m_CharacterSprite.transform.SetParent (Box);
 		CharacterInstance [x_Num,y_Num].m_SpriteNum = CharaData [Chara_Num].m_SpriteNum;
 	}
 
 	public void CreateCharaInstance_Name(string Chara_Name,int x_Num,int y_Num,Vector2 vec2Pos)
 	{
-		CharacterInstance [x_Num,y_Num].m_CharacterSprite = Instantiate(CharaData [CharaNum[Chara_Name]].m_CharacterSprite,new Vector3 (vec2Pos.x, vec2Pos.y, 0),Quaternion.identity);
+		if(!CharacterInstance [x_Num,y_Num].m_CharacterSprite)
+			CharacterInstance [x_Num,y_Num].m_CharacterSprite = Instantiate(CharaData [CharaNum[Chara_Name]].m_CharacterSprite,new Vector3 (vec2Pos.x, vec2Pos.y, 0),Quaternion.identity);
 		CharacterInstance [x_Num,y_Num].m_SpriteNum = CharaData [CharaNum[Chara_Name]].m_SpriteNum;
 	}
 
@@ -159,6 +214,16 @@ public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
 		CharacterInstance [x_Num,y_Num].m_SpriteNum = CharaData.Length + 1;
 	}
 
+	internal void RootDestoryInstance(ref List<CharacterData> objList)
+	{
+		for (int i = 0; i < objList.Count; i++) {
+			CharacterData newList = objList[i];
+			Destroy (newList.m_CharacterSprite);
+			newList.m_SpriteName = "a";
+			newList.m_SpriteNum = CharaData.Length + 1;
+			objList [i] = newList;
+		}
+	}
 
 	public void DirectionMove(int i,int j,int M)
 	{
