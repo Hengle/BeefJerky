@@ -1,14 +1,13 @@
-﻿using System.Collections;
+﻿/**
+ * @file   CharacterManager.cs
+ * @brief  ドロップの制御
+ * @author 神田　晃伸
+ * @date   2017/12/13
+ */
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-enum direction
-{
-	Left,
-	Right,
-	Up,
-	Down
-}
 
 [System.Serializable]
 internal struct CharacterData
@@ -21,27 +20,27 @@ internal struct CharacterData
 public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
 
 
-	[SerializeField]
-	int xLength = 8;
-	[SerializeField]
+	[SerializeField, TooltipAttribute("縦の長さ"),Range(1,15)]
+	int xLength = 8;				
+	[SerializeField, TooltipAttribute("横の長さ"),Range(1,15)]
 	int yLength = 8;
 
-	int DestroyCount = 0;
-	int searchX,searchY;
+	int DestroyCount = 0;		//!< 繋がっている数
 
-	float Width;
-	float Height;
+	float Width;				//!< ドロップの横の大きさ
+	float Height;				//!< ドロップの縦の大きさ
 
-	[SerializeField]
-	Transform InitPos;
-	Transform Box;
+	[SerializeField]　string DestroyName;
 
-	[SerializeField]
-	private CharacterData[] CharaData;
+	[SerializeField]　
+	Transform InitPos;			//!< 二次元配列のスタート地点
+	Transform Box;				//!< 親設定のための Transform
+
+	[SerializeField, TooltipAttribute("縦の長さ"),Space(30)]　
+	private CharacterData[] CharaData;					
 	private Dictionary<string,int> CharaNum = new Dictionary<string, int>();
 
-	List<GameObject> quere;
-	internal CharacterData[,] CharacterInstance;
+	internal CharacterData[,] CharacterInstance;		//!< パズルの総格納二次元配列
 
 	// Use this for initialization
 	private void Awake () {
@@ -70,6 +69,8 @@ public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
 			for (int j = 0; j < CharacterInstance .GetLength(1); j++) {
 
 				int l_random = Random.Range (0, CharaData.Length);
+
+				// 全マス均一な大きさにするため、最初のマスの大きさを使う
 				Width = CharaData [0].m_CharacterSprite.GetComponent<RectTransform> ().sizeDelta.x;
 				Height = CharaData [0].m_CharacterSprite.GetComponent<RectTransform> ().sizeDelta.y;
 
@@ -80,11 +81,9 @@ public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
 		}
 	}
 
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
+	/**
+	 * @brief				初期化
+	 */
 	private void Init()
 	{
 		CharacterInstance = new CharacterData[xLength,yLength];
@@ -99,23 +98,13 @@ public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
 		}
 	}
 
-	// つながっていれば削除する処理
-	void RootDestroy()
-	{
-//		// 探す
-//		for (int i = 0; i < CharacterInstance.GetLength (0); i++) {
-//			for (int j = 0; j < CharacterInstance.GetLength (1); j++) {
-//				while (RootFlg (i, j)) {
-//					DestroyCount++;
-//					quere.Add (CharacterInstance [i, j].m_CharacterSprite);
-//					CharacterInstance [i, j].m_SpriteNum = CharaData.Length + 1;
-//
-//				}
-//			}
-//		}
-	}
-
-
+	/**
+	 * @brief					繋がっているドロップ探索
+	 * @param[in] num			繋がり判定するための int 型
+	 * @param[in] x				x軸配列座標
+	 * @param[in] y				y軸配列座標
+	 * @details   				再起処理を行って判定している。
+	 */
 	internal void search(int num, ref List<CharacterData> objList,int x,int y)
 	{
 		
@@ -177,9 +166,14 @@ public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
 
 	}
 
-	private void CheckSpriteNum(int y,int x){
-	}
 
+	/**
+	 * @brief					指定番号のオブジェクト生成
+	 * @param[in] Chara_Num		生成オブジェクトの番号指定
+	 * @param[in] x_Num			x軸配列座標
+	 * @param[in] y_Num			y軸配列座標
+	 * @param[in] vec2Pos		座標
+	 */
 	public void CreateCharaInstance_No(int Chara_Num,int x_Num,int y_Num,Vector2 vec2Pos)
 	{
 		if(!CharacterInstance [x_Num,y_Num].m_CharacterSprite)
@@ -188,6 +182,13 @@ public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
 		CharacterInstance [x_Num,y_Num].m_SpriteNum = CharaData [Chara_Num].m_SpriteNum;
 	}
 
+	/**
+	 * @brief					指定ネームのオブジェクト生成
+	 * @param[in] Chara_Name	生成オブジェクトの名前指定
+	 * @param[in] x_Num			x軸配列座標
+	 * @param[in] y_Num			y軸配列座標
+	 * @param[in] vec2Pos		座標
+	 */
 	public void CreateCharaInstance_Name(string Chara_Name,int x_Num,int y_Num,Vector2 vec2Pos)
 	{
 		if(!CharacterInstance [x_Num,y_Num].m_CharacterSprite)
@@ -195,18 +196,38 @@ public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
 		CharacterInstance [x_Num,y_Num].m_SpriteNum = CharaData [CharaNum[Chara_Name]].m_SpriteNum;
 	}
 
+	/**
+	 * @brief					マスオブジェクトの情報を受け取る処理
+	 * @param[in] x_Num			x軸配列座標
+	 * @param[in] y_Num			y軸配列座標
+	 * @param[out] _output		マスオブジェクト参照渡し
+	 * @param[out] _Num			マスオブジェクトナンバー参照渡し
+	 */
 	public void getCharaInstance(int x_Num,int y_Num,ref GameObject _output,ref int _Num)
 	{
 		_output = CharacterInstance [x_Num,y_Num].m_CharacterSprite;
 		_Num = CharacterInstance [x_Num,y_Num].m_SpriteNum;
 	}
 
+	/**
+	 * @brief					ランダムマス生成
+	 * @param[in] x_Num			x軸配列座標
+	 * @param[in] y_Num			y軸配列座標
+	 * @param[in] vec2Pos		座標指定
+	 * @param[in] rangeMin		ランダム最小値
+	 * @param[in] rangeMax		ランダム最大値
+	 */
 	void RandomCreate(int x_Num,int y_Num,Vector2 vec2Pos,int rangeMin,int rangeMax)
 	{
 		int l_ramdom = Random.Range (rangeMin, rangeMax);
 		CreateCharaInstance_No (l_ramdom, x_Num, y_Num, vec2Pos);
 	}
 
+	/**
+	 * @brief				特定のマス削除処理
+	 * @param[in] x_Num		x軸配列座標
+	 * @param[in] y_Num		y軸配列座標
+	 */
 	public void DestoryInstance(int x_Num,int y_Num)
 	{
 		Destroy (CharacterInstance [x_Num,y_Num].m_CharacterSprite);
@@ -214,12 +235,17 @@ public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
 		CharacterInstance [x_Num,y_Num].m_SpriteNum = CharaData.Length + 1;
 	}
 
+	/**
+	 * @brief				組になっているかどうかサーチする処理
+	 * @param[in] x			x軸配列座標
+	 * @param[in] y			y軸配列座標
+	 */
 	internal void CombinationSearch(int x,int y){
 		List<CharacterData> list = new List<CharacterData>();
 		switch (CharacterInstance [x, y].m_SpriteNum) {
 		case 0://牛 仲間がいたらまとまってジャーキーになる
 			
-			search (0,ref list, x, y);
+			search (CharaNum[DestroyName],ref list, x, y);
 			if (list.Count >= 4)
 				RootDestoryInstance (ref list);//とりあえず削除
 			break;
@@ -228,67 +254,49 @@ public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
 			break;
 		}
 	}
-
-	internal void Combination(int num,List<CharacterData> list){
-		switch (num) {
-		case 0:
-			foreach (CharacterData data in list)
-				if (data.m_CharacterSprite)
-					Destroy (data.m_CharacterSprite);
-			break;
-		case 1:
-			foreach (CharacterData data in list)
-				if (data.m_CharacterSprite)
-					Destroy (data.m_CharacterSprite);
-			break;
-		case 2:
-			break;
-		case 3:
-			break;
-		}
-	}
-
+//
+//	internal void Combination(int num,List<CharacterData> list){
+//		switch (num) {
+//		case 0:
+//			foreach (CharacterData data in list)
+//				if (data.m_CharacterSprite)
+//					Destroy (data.m_CharacterSprite);
+//			break;
+//		case 1:
+//			foreach (CharacterData data in list)
+//				if (data.m_CharacterSprite)
+//					Destroy (data.m_CharacterSprite);
+//			break;
+//		case 2:
+//			break;
+//		case 3:
+//			break;
+//		}
+//	}
+//
+	/**
+	 * @brief					リスト内に入っているオブジェクトの削除
+	 * @param[in] objList		削除したいリスト
+	 * @details   				削除とは言っているが、Clear()はしていない。
+	 */
 	internal void RootDestoryInstance(ref List<CharacterData> objList)
 	{
 		for (int i = 0; i < objList.Count; i++) {
 			CharacterData newList = objList[i];
 			Destroy (newList.m_CharacterSprite);
-			newList.m_SpriteName = "a";
+			newList.m_SpriteName = "NULL";
 			newList.m_SpriteNum = CharaData.Length + 1;
 			objList [i] = newList;
 		}
 	}
 
-	public void DirectionMove(int i,int j,int M)
-	{
-		int l_x = 0, l_y = 0;
-		if (M == (int)direction.Left) {
-			l_x = -1;
-		}else if (M == (int)direction.Right) {
-			l_x = 1;
-		}else if (M == (int)direction.Up) {
-			l_y = -1;
-		}else if(M == (int)direction.Down) {
-			l_y = 1;
-		}
-
-
-		Vector3 after;
-		after = CharacterInstance [i, j].m_CharacterSprite.GetComponent<RectTransform>().position;
-		CharacterInstance [i, j].m_CharacterSprite.GetComponent<RectTransform>().position = CharacterInstance [i - 1, j].m_CharacterSprite.GetComponent<RectTransform>().position;
-		CharacterInstance [i - 1, j].m_CharacterSprite.GetComponent<RectTransform>().position = after;
-
-		string _afterS;
-		_afterS = CharacterInstance [i, j].m_SpriteName;
-		CharacterInstance [i, j].m_SpriteName = CharacterInstance [i + l_x, j + l_y].m_SpriteName;
-		CharacterInstance [i + l_x, j + l_y].m_SpriteName = _afterS;
-
-		int _afterI;
-		_afterI = CharacterInstance [i, j].m_SpriteNum;
-		CharacterInstance [i, j].m_SpriteNum = CharacterInstance [i + l_x, j + l_y].m_SpriteNum;
-		CharacterInstance [i + l_x, j + l_y].m_SpriteNum = _afterI;
-	}
-
+	/**
+	 * @brief					指定番号のオブジェクト生成
+	 * @param[in] x1			1つ目のx軸配列座標
+	 * @param[in] y1			1つ目のy軸配列座標
+	 * @param[in] x2			2つ目のx軸配列座標
+	 * @param[in] y2			2つ目のy軸配列座標
+	 */
 	//internal void DirectionObjMove(CharacterData DropX,CharacterData DropY)
 	internal void DirectionObjMove(int x1,int y1,int x2,int y2)
 	{

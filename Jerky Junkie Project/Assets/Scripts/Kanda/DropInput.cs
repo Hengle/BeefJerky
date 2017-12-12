@@ -1,14 +1,24 @@
-﻿using System.Collections;
+﻿/**
+ * @file   DropInput.cs
+ * @brief  ドロップを触った時の制御
+ * @author 神田　晃伸
+ * @date   2017/12/13
+ */
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/**
+ * @brief  	  ドロップを触った時の制御
+ * @details   パズルを交換するためにインプットを受け取る。パズルを交換する。
+ */
 public class DropInput : MonoBehaviour {
 
-	int numX,numY;
-	bool InputFlg,ChangeFlg;
+	int nowX,nowY;					//!<　ドロップを選択した時のドロップの二次元配列位置を保存する変数
+	bool InputFlg,ChangeFlg;		//!<　一回しか処理をさせないストッパー変数
 
-	CharacterManager CharaManager;
-	List<CharacterData> SaveObj;
+	CharacterManager CharaManager;	//!<　CharaManagerインスタンス
+	List<CharacterData> SaveObj;	//!<　削除するドロップを格納するリスト
 
 	// Use this for initialization
 	void Start () {
@@ -30,13 +40,17 @@ public class DropInput : MonoBehaviour {
 			if (l_hit.collider) {
 				if (l_hit.collider.CompareTag ("Drop")) {
 					if (!InputFlg) {
+						
+						// ドロップの二次元配列の探索 
 						for (int i = 0; i < CharaManager.CharacterInstance.GetLength (0); i++) {
 							for (int j = 0; j < CharaManager.CharacterInstance.GetLength (1); j++) {
+								// ヒットしたオブジェクトと一致していれば実行
 								if (CharaManager.CharacterInstance [i, j].m_CharacterSprite.GetInstanceID () == l_hit.collider.gameObject.GetInstanceID ()) {
+									// ヒットオブジェクトを格納
 									SaveObj.Clear ();
 									SaveObj.Add (CharaManager.CharacterInstance [i, j]);
-									numX = i;
-									numY = j;
+									nowX = i;
+									nowY = j;
 
 									InputFlg = true;
 									break;
@@ -47,17 +61,21 @@ public class DropInput : MonoBehaviour {
 						}
 					} else {
 						if (SaveObj.Count != 0 && !ChangeFlg) {
+							
+							// 他のマスに移動していれば実行
 							if (SaveObj [0].m_CharacterSprite.GetInstanceID () != l_hit.collider.gameObject.GetInstanceID ()) {
+								// ドロップの二次元配列の探索 
 								for (int i = 0; i < CharaManager.CharacterInstance.GetLength (0); i++) {
 									for (int j = 0; j < CharaManager.CharacterInstance.GetLength (1); j++) {
+										// ヒットしたオブジェクトと一致していれば実行
 										if (CharaManager.CharacterInstance [i, j].m_CharacterSprite.GetInstanceID () == l_hit.collider.gameObject.GetInstanceID ()) {
-											CharaManager.DirectionObjMove (numX, numY, i, j);
+											CharaManager.DirectionObjMove (nowX, nowY, i, j);
 
 											Debug_CharacterDataLog ();
 											CharaManager.CombinationSearch (i, j);
 											//CharaManager.search (SaveObj [0].m_SpriteNum, ref SaveObj, i, j);
 											//CharaManager.search (CharaManager.CharacterInstance [numX, numY].m_SpriteNum, ref SaveObj, numX, numY);
-											CharaManager.CombinationSearch (numX, numY);
+											CharaManager.CombinationSearch (nowX, nowY);
 											Debug.Log (true);
 
 											ChangeFlg = true;
@@ -82,7 +100,7 @@ public class DropInput : MonoBehaviour {
 		if (Input.GetMouseButtonUp (1)) {
 			CharaManager.RootDestoryInstance (ref SaveObj);
 			SaveObj.Clear ();
-			numX =numY = 0;
+			nowX =nowY = 0;
 		}
 
 		Debug.Log (SaveObj.Count);
