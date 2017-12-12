@@ -2,21 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+enum direction
+{
+	Left,
+	Right,
+	Up,
+	Down
+}
 
 public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
 
 	[System.Serializable]
-	private struct CharacterData
+	internal struct CharacterData
 	{
 		public GameObject m_CharacterSprite;
 		public string m_SpriteName;
-		public int m_SpriteNum{ get; set; }
+		internal int m_SpriteNum{ get; set; }
 	}
 
 	[SerializeField]
 	int xLength = 8;
 	[SerializeField]
 	int yLength = 8;
+
+	int DestroyCount = 0;
 
 	float Width;
 	float Height;
@@ -29,8 +38,8 @@ public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
 	private CharacterData[] CharaData;
 	private Dictionary<string,int> CharaNum = new Dictionary<string, int>();
 
-
-	private CharacterData[,] CharacterInstance;
+	List<GameObject> quere;
+	internal CharacterData[,] CharacterInstance;
 
 	// Use this for initialization
 	private void Awake () {
@@ -87,6 +96,37 @@ public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
 		}
 	}
 
+	// つながっていれば削除する処理
+	void RootDestroy()
+	{
+		// 探す
+		for (int i = 0; i < CharacterInstance.GetLength (0); i++) {
+			for (int j = 0; j < CharacterInstance.GetLength (1); j++) {
+				while (RootFlg (i, j)) {
+					DestroyCount++;
+					quere.Add (CharacterInstance [i, j].m_CharacterSprite);
+					CharacterInstance [i, j].m_SpriteNum = CharaData.Length + 1;
+
+				}
+			}
+		}
+	}
+
+	bool RootFlg(int i, int j)
+	{
+		bool l_RootFlg;
+//
+//		if((i != 0 && CharacterInstance [i, j].m_SpriteNum == CharacterInstance [i - 1, j].m_SpriteNum))
+//		{
+//			DestroyCount++;
+//		}
+//		(i != CharacterInstance.GetLength (0) - 1 && CharacterInstance [i + 1, j].m_SpriteNum == CharacterInstance [i, j + 1].m_SpriteNum) ||
+//		(j != 0 && CharacterInstance [i, j].m_SpriteNum == CharacterInstance [i, j - 1].m_SpriteNum) ||
+//		(j != CharacterInstance.GetLength (0) - 1 && CharacterInstance [i, j + 1].m_SpriteNum == CharacterInstance [i, j + 1].m_SpriteNum))
+//
+		return l_RootFlg;
+	}
+
 	public void CreateCharaInstance_No(int Chara_Num,int x_Num,int y_Num,Vector2 vec2Pos)
 	{
 		CharacterInstance [x_Num,y_Num].m_CharacterSprite = GameObject.Instantiate(CharaData [Chara_Num].m_CharacterSprite,new Vector3(vec2Pos.x,vec2Pos.y,0),Quaternion.identity) as GameObject;
@@ -117,5 +157,45 @@ public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
 		Destroy (CharacterInstance [x_Num,y_Num].m_CharacterSprite);
 		CharacterInstance [x_Num,y_Num].m_SpriteName = null;
 		CharacterInstance [x_Num,y_Num].m_SpriteNum = CharaData.Length + 1;
+	}
+
+
+	public void DirectionMove(int i,int j,int M)
+	{
+		int l_x = 0, l_y = 0;
+		if (M == (int)direction.Left) {
+			l_x = -1;
+		}else if (M == (int)direction.Right) {
+			l_x = 1;
+		}else if (M == (int)direction.Up) {
+			l_y = -1;
+		}else if(M == (int)direction.Down) {
+			l_y = 1;
+		}
+
+
+		Vector3 after;
+		after = CharacterInstance [i, j].m_CharacterSprite.GetComponent<RectTransform>().position;
+		CharacterInstance [i, j].m_CharacterSprite.GetComponent<RectTransform>().position = CharacterInstance [i - 1, j].m_CharacterSprite.GetComponent<RectTransform>().position;
+		CharacterInstance [i - 1, j].m_CharacterSprite.GetComponent<RectTransform>().position = after;
+
+		string _afterS;
+		_afterS = CharacterInstance [i, j].m_SpriteName;
+		CharacterInstance [i, j].m_SpriteName = CharacterInstance [i + l_x, j + l_y].m_SpriteName;
+		CharacterInstance [i + l_x, j + l_y].m_SpriteName = _afterS;
+
+		int _afterI;
+		_afterI = CharacterInstance [i, j].m_SpriteNum;
+		CharacterInstance [i, j].m_SpriteNum = CharacterInstance [i + l_x, j + l_y].m_SpriteNum;
+		CharacterInstance [i + l_x, j + l_y].m_SpriteNum = _afterI;
+	}
+
+	public void DirectionObjMove(GameObject DropX,GameObject DropY)
+	{
+		Vector3 after;
+		after = DropX.GetComponent<RectTransform>().position;
+		DropX.GetComponent<RectTransform>().position = DropY.GetComponent<RectTransform>().position;
+		DropY.GetComponent<RectTransform>().position = after;
+//
 	}
 }
