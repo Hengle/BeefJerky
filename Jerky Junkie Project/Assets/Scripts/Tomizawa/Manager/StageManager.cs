@@ -70,8 +70,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     private void CharacterInit() {
         foreach (StageChip chips in Stage) {
             Character character =  Instantiate(characterPrefabs[0]);
-            character.transform.SetParent(chips.transform);
-            character.transform.localPosition = Vector2.zero;
+            chips.AddCharacter(character);
         }
     }
 
@@ -79,7 +78,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     /// 一番下の行のCharacterを全て削除する
     /// </summary>
     public void DeleteDownLineCharacter() {
-        int line = Stage.GetLength(0);
+        int line = Stage.GetLength(0) - 1;
         int length = Stage.GetLength(1);
         for (int i = 0; i < length; i++) {
             if (Stage[line, i].stayCharacter) {
@@ -93,6 +92,21 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     }
 
     public void GravityUpdate() {
+        for (int i = Stage.GetLength(0) - 1; i >= 0; i--) {
+            for (int j = Stage.GetLength(1); j >= 0; j--) {
+                if (Stage[i,j].stayCharacter && isDownSideChip(i, j)) {
+                    //Characterを下のマスに移動させる
+                    Stage[i, j + 1].MoveCharacter(Stage[i, j]);
+                }
+            }
+        }
+    }
 
+    /// <summary>
+    /// 指定したマスの下にマスがあるか確認
+    /// </summary>
+    /// <returns></returns>
+    private bool isDownSideChip(int x,int y) {
+        return (y < Stage.GetLength(1) - 1);
     }
 }

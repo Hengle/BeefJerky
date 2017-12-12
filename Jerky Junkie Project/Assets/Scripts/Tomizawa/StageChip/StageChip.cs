@@ -8,6 +8,7 @@ using UnityEngine;
 public class StageChip : MonoBehaviour {
     public Vector2 position { get { return transform.position; } }
     public Character stayCharacter { get { return _character; } }
+    [SerializeField]
     private Character _character;
 
     private void Update()
@@ -20,22 +21,26 @@ public class StageChip : MonoBehaviour {
     /// <summary>
     /// このマスからCharacterを出す処理
     /// </summary>
-    private void RemoveCharacter() {
-
+    private Character RemoveCharacter() {
+        Character character = _character;
+        _character = null;
+        return character;
     }
 
     /// <summary>
     /// このマスにCharacterを追加する処理
     /// </summary>
-    private void AddCharacter() {
-
+    public void AddCharacter(Character target) {
+        _character = target;
+        _character.transform.SetParent(transform);
+        _character.transform.localPosition = Vector2.zero;
     }
 
     /// <summary>
     /// このマスから他のマスにCharacterを動かす処理
     /// </summary>
-    /// <param name="target"></param>
-    public void MoveCharacter(StageChip target) {
-
+    /// <param name="targetChip"></param>
+    public void MoveCharacter(StageChip targetChip) {
+        AddCharacter(targetChip.RemoveCharacter());
     }
 }
