@@ -26,6 +26,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     private List<Character> characterPrefabs;
 
     private bool updateFlag;
+    public bool stopFlag;
 
     // Use this for initialization
     void Start () {
@@ -39,9 +40,17 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 
     private void Update()
     {
-        foreach (StageChip chip in backGroundStage) {
-            if (chip.stayCharacter == null)
-                chip.AddCharacter(InitCharacter());
+        if (Time.timeScale == 0 || stopFlag) return;
+        //キャラクターが削除された時など、必要な時のみ処理する
+        if (updateFlag) {
+            updateFlag = false;
+            GravityUpdate();
+
+            foreach (StageChip chip in backGroundStage)
+            {
+                if (chip.stayCharacter == null)
+                    chip.AddCharacter(InitCharacter());
+            }
         }
     }
 
@@ -99,7 +108,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     private void CharacterInit(StageChip[,] stage) {
         foreach (StageChip chips in stage) {
             Character character = InitCharacter();
-            chips.AddCharacter(character);
+            chips.AddCharacter(character,true);
         }
     }
 
@@ -122,6 +131,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     /// <param name="target"></param>
     private void DeleteCharacter(Character target) {
         Destroy(target.gameObject);
+        updateFlag = true;
     }
 
     /// <summary>
@@ -222,5 +232,15 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     /// </summary>
     public void SetUpdate() {
         updateFlag = true;
+    }
+
+    public void RandDelete()
+    {
+        DeleteCharacter(Stage[Random.Range(0, Stage.GetLength(0)), Random.Range(0, Stage.GetLength(1))].stayCharacter);
+    }
+
+    struct masu {
+        public int num;
+        public GameObject obj;
     }
 }

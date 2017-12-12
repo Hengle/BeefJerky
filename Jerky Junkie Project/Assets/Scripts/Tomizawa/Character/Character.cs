@@ -11,7 +11,7 @@ public class Character : MonoBehaviour {
 
     public void MoveStart(Vector2 pos) {
         if (move != null) StopCoroutine(move);
-        if (gameObject.activeSelf)
+        if (gameObject.activeInHierarchy)
             move = StartCoroutine(MoveTo(this, pos)); //StartCoroutine(MoveTo(_character.gameObject, position));
         else transform.position = pos;
     }
@@ -22,6 +22,10 @@ public class Character : MonoBehaviour {
 
         while (target != null && Vector2.Distance(target.transform.position, pos) > 0.1f)
         {
+            if (Time.timeScale == 0 || StageManager.Instance.stopFlag) {
+                yield return null;
+                continue;
+            }
             target.transform.position = Vector2.Lerp(target.transform.position, pos, 0.1f);
             yield return null;
         }
