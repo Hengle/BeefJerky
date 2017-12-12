@@ -4,13 +4,18 @@ using UnityEngine;
 
 public class TitleManager : MonoBehaviour
 {
-	[SerializeField] private ScenesManager sceneManager = null;
+	public FadeManager fadeManager = null;
+
+	private void Awake()
+	{
+		fadeManager = transform.Find("SceneFade").GetComponent<FadeManager>();
+	}
 
 	private void Update()
 	{
 		if (Input.GetMouseButton(0))
 		{
-			sceneManager.Scenes("Sugawara_Main");
+			fadeManager.LoadLevel("Sugawara_Main");
 		}
 	}
 }

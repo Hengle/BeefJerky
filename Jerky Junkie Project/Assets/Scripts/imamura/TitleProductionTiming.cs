@@ -4,8 +4,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class TitleProductionTiming : MonoBehaviour {
-    void Awake()             //開始直後から流れるBGM
+    void Start()     //開始直後から流れるBGM
     {
+        Debug.Log("シーンスタート");
         if (SceneManager.GetActiveScene().name == "Title")
         {
             SoundManager.Instance.PlayBGM("TitleBGM");
@@ -15,7 +16,7 @@ public class TitleProductionTiming : MonoBehaviour {
             SoundManager.Instance.PlayBGM("GameBGM"); 
         }
     }
-
+    
  //シーン区別なくどちらでも使用
     public void TapBottanSE()            //ボタンをタッチしたときの音。（オプション統一）
     {
@@ -31,7 +32,7 @@ public class TitleProductionTiming : MonoBehaviour {
     //
 
     //シーン「メイン」の中でのみ使用
-    public void CountDownSE()            //カウントダウン。スタート前の３２１と終わる間近の５４３２１
+    public void CountDownSE()            //カウントダウン。スタート前の３２１と終わる間近の５４３２１    現状。ピッピッピッ、ピーって音が入ってる。そのため、下二つは使わない。
     {
         SoundManager.Instance.PlaySE("CountDown");
     }
@@ -46,6 +47,7 @@ public class TitleProductionTiming : MonoBehaviour {
         SoundManager.Instance.PlaySE("END");
     }
 
+
     public void DropExchangeSE()            //隣り合ったドロップを交換するタイミングで
     {
         SoundManager.Instance.PlaySE("DropExchange");
@@ -54,7 +56,7 @@ public class TitleProductionTiming : MonoBehaviour {
     public void BeefjerkyCreateSE(int x,int y)            //ジャーキーに変わったタイミングで        エフェクト出現させたい位置のX,Y軸の入力をお願いします
     {
         SoundManager.Instance.PlaySE("BeefjerkyCreate");
-        EffectManager.Instance.PlayEffect("Beefjerky", new Vector2(x,y), 2.0f); 
+        EffectManager.Instance.PlayEffect("Beefjerky", new Vector2(x,y), 2.0f);
     }
 
     public void OSSANEatSE(int x, int y)            //おっさんが食べるときのSE。        エフェクト出現させたい位置のX,Y軸の入力をお願いします
@@ -72,15 +74,16 @@ public class TitleProductionTiming : MonoBehaviour {
 
     void Update()           //テスト用
     {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            BeefjerkyCreateSE(0, 0);
 
-        }
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            DropExchangeSE();
-        }
+        //if (Input.GetKeyDown(KeyCode.A))
+        //{
+        //    BeefjerkyCreateSE(0, 0);
+        //    SceneManager.LoadScene("Title");
+        //}
+        //if (Input.GetKeyDown(KeyCode.S))
+        //{
+        //    DropExchangeSE();
+        //}
     }
 
 }

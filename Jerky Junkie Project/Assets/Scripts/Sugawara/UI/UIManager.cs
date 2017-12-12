@@ -19,16 +19,21 @@ public class UIManager : MonoBehaviour {
 
 	[SerializeField] private Slider[] audioSlider = null;
 
-	[SerializeField] private Text scoreText = null;
-
-	[SerializeField] private ScenesManager sceneManager = null;
+	[SerializeField] private FadeManager fadeManager = null;
 
 	[SerializeField] private WindowMove windowMove = null;
+	[SerializeField] private AnimationScore animationScore = null;
+	public int saveScore = 0;
 
 	private float maxT = 100f;
 	private float t;
 
 	private int score = 0;
+
+	private void Awake()
+	{
+		fadeManager = transform.Find("SceneFade").GetComponent<FadeManager>();
+	}
 
 	private void Start()
 	{
@@ -42,9 +47,6 @@ public class UIManager : MonoBehaviour {
 	void Update () {
 		t -= Time.deltaTime * 5.0f;
 		TimeUpdate(t);
-
-		score += (int)(Time.deltaTime * 100);
-		ScoreUpdate(score);
 	}
 
 	public void TimeUpdate(float time)
@@ -54,7 +56,8 @@ public class UIManager : MonoBehaviour {
 
 	public void ScoreUpdate(int score)
 	{
-		scoreText.text = "Score:" + score.ToString("D6");
+		animationScore.AnimationPlay(saveScore,score);
+		saveScore = score;
 	}
 
 	public void Pause()
@@ -110,7 +113,7 @@ public class UIManager : MonoBehaviour {
 	public void ExitButton()
 	{
 		Time.timeScale = 1.0f;
-		sceneManager.Scenes("Title");
+		fadeManager.LoadLevel("Title");
 	}
 
 }

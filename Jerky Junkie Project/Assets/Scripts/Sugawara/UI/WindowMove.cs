@@ -20,11 +20,11 @@ public class WindowMove : MonoBehaviour {
 	{
 		if (down)
 		{
-			rectTransform.DOMoveY(downPosition,speed).SetUpdate(true);
+			rectTransform.DOMoveY(downPosition,speed).SetUpdate(true).SetEase(Ease.Linear);
 		}
 		else
 		{
-			rectTransform.DOMoveY(upPosition, speed).SetUpdate(true);
+			rectTransform.DOMoveY(upPosition, speed).SetUpdate(true).SetEase(Ease.Linear);
 		}
 	}
 
