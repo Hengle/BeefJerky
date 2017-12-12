@@ -1,8 +1,15 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:Jerky Junkie Project/Assets/Demigiant.meta
 guid: c61bf2803327cd8449946efbd08f004c
 folderAsset: yes
 timeCreated: 1513067177
 licenseType: Pro
+=======
+guid: 6b9b90588181016429dd33d6bb19e990
+folderAsset: yes
+timeCreated: 1513059108
+licenseType: Free
+>>>>>>> akinobu:Jerky Junkie Project/Assets/Scripts/Kanda.meta
 DefaultImporter:
   userData: 
   assetBundleName: 

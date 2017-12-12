@@ -1,14 +1,15 @@
 fileFormatVersion: 2
 <<<<<<< HEAD
-guid: 6eef593194e85224d92fcd4b24d93cb0
+guid: ec16e138a1dae9b43b4255df75ad3285
 folderAsset: yes
-timeCreated: 1513066182
+timeCreated: 1513042823
+licenseType: Pro
 =======
-guid: 5a18a3af8f4c18d4d9d1b33d25d3a23b
+guid: 47377304ef9fdad41bcb3b920c0341e7
 folderAsset: yes
-timeCreated: 1513047464
->>>>>>> akinobu
+timeCreated: 1513053358
 licenseType: Free
+>>>>>>> origin/Puzzle
 DefaultImporter:
   userData: 
   assetBundleName: 
