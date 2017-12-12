@@ -13,6 +13,12 @@ public class UIManager : MonoBehaviour {
 
 	[SerializeField] private Sprite[] pauseButtonSprite = null;
 
+	[SerializeField] private AudioSource[] audioSource = null;
+	private bool[] audioMute = { false,false}; //trueのときミュート
+	private float[] saveValue = { 0.0f, 0.0f };
+	[SerializeField] private Image[] musicButtonImage = null;
+	[SerializeField] private Sprite[] musicButtonSprite = null;
+
 	private float maxT = 100f;
 	private float t;
 
@@ -46,6 +52,23 @@ public class UIManager : MonoBehaviour {
 		{
 			pauseButtonImage.sprite = pauseButtonSprite[0];
 			Time.timeScale = 1.0f;
+		}
+	}
+
+	public void MusicButton(int audioNum)
+	{
+		audioMute[audioNum] = !audioMute[audioNum];
+		//saveValue[audioNum] = audioSource[audioNum].volume;
+
+		if (audioMute[audioNum])
+		{
+			musicButtonImage[audioNum].sprite = musicButtonSprite[1];
+			//audioSource[audioNum].volume = 0.0f;
+		}
+		else 
+		{
+			musicButtonImage[audioNum].sprite = musicButtonSprite[0];
+			//audioSource[audioNum].volume = saveValue[audioNum];
 		}
 	}
 
