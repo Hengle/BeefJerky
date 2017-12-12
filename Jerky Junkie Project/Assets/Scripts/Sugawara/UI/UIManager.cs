@@ -8,9 +8,7 @@ public class UIManager : MonoBehaviour {
 	[SerializeField] private Slider timeSlider = null;
 	[SerializeField] private GameObject pauseWindow = null;
 	[SerializeField] private bool pause = false;
-	[SerializeField] private Button pauseButton = null;
-	private Image pauseButtonImage = null;
-
+	[SerializeField] private Image pauseButtonImage = null;
 	[SerializeField] private Sprite[] pauseButtonSprite = null;
 
 	[SerializeField] private AudioSource[] audioSource = null;
@@ -21,24 +19,40 @@ public class UIManager : MonoBehaviour {
 
 	[SerializeField] private Slider[] audioSlider = null;
 
+	[SerializeField] private Text scoreText = null;
+
+	[SerializeField] private ScenesManager sceneManager = null;
+
 	private float maxT = 100f;
 	private float t;
+
+	private int score = 0;
 
 	private void Start()
 	{
 		t = maxT;
 		pauseWindow.SetActive(false);
-		pauseButtonImage = pauseButton.GetComponent<Image>();
+		GameObject soundObj = GameObject.Find("SoundManager");
+		audioSource[0] = soundObj.transform.Find("BGMManager").GetComponent<AudioSource>();
+		audioSource[1] = soundObj.transform.Find("SEManager").GetComponent<AudioSource>();
 	}
 
 	void Update () {
 		t -= Time.deltaTime * 5.0f;
 		TimeUpdate(t);
+
+		score += (int)(Time.deltaTime * 100);
+		ScoreUpdate(score);
 	}
 
 	public void TimeUpdate(float time)
 	{
 		timeSlider.value = t/maxT;
+	}
+
+	public void ScoreUpdate(int score)
+	{
+		scoreText.text = "Score:" + score.ToString("D6");
 	}
 
 	public void Pause()
@@ -92,7 +106,8 @@ public class UIManager : MonoBehaviour {
 
 	public void ExitButton()
 	{
-		//タイトルシーンへ遷移
+		Time.timeScale = 1.0f;
+		sceneManager.Scenes("Title");
 	}
 
 }
