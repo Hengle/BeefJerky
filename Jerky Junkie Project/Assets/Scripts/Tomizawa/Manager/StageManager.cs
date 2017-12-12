@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// ステージのマネージャーClass
@@ -14,14 +15,14 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     private Vector2 StageSize,DefaultPosition;
 
 
-    //[SerializeField]
-    //private Sprite[] data;//使用するマス画像
+    [SerializeField]
+    private Sprite[] data;//使用するマス画像
     //[SerializeField]
     //private Vector2 spriteSize;//画像の基本サイズ
     [SerializeField]
     private StageChip StageChipPrefab;
     [SerializeField]
-    private Vector2 chipSze,offset;
+    private Vector2 chipSze;//,offset;//余白は無し
     [SerializeField]
     private List<Character> characterPrefabs;
 
@@ -60,7 +61,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     private StageChip[,] InitStage(bool isBack = false)
     {
         Vector2 InitStageSize = StageSize;
-        StageSize.x += offset.x;//右端に余白
+        //StageSize.x += offset.x;//右端に余白
         StageChip[,] stage = new StageChip[x, y];
         ////ステージの左上の場所を取得
         //Vector2 leftUpSide = new Vector2(-StageSize.x / 2, StageSize.y / 2) + DefaultPosition;//ステージ左上のポジションを取得
@@ -71,7 +72,8 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
         //scale.x = res;
 
         Vector2 leftUpSide = new Vector2(-StageSize.x / 2, StageSize.y / 2) + DefaultPosition;
-        Vector2 scale = new Vector2((InitStageSize.x / ((chipSze.x) * x + offset.x)), (InitStageSize.y / ((chipSze.y) * y + offset.y)));
+        //Vector2 scale = new Vector2((InitStageSize.x / ((chipSze.x) * x + offset.x)), (InitStageSize.y / ((chipSze.y) * y + offset.y)));
+        Vector2 scale = new Vector2((InitStageSize.x / ((chipSze.x) * x)), (InitStageSize.y / ((chipSze.y) * y)));
 
         GameObject parent;
         if (isBack)
@@ -89,13 +91,15 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
             pos.x = leftUpSide.x + ((chipSze.x * scale.x) * 0.5f);
             for (int j = 0; j < x; j++) {
                 stage[j, i] = Instantiate(StageChipPrefab, parent.transform);//StageChip.InitStageChip(data[j % data.Length]);
+                Image image = stage[j, i].GetComponent<Image>();
+                image.sprite = data[(i + j) % data.Length];
                 stage[j, i].transform.localPosition = pos;
                 //次に配置するマスの位置を計算
-                pos.x += chipSze.x * scale.x + offset.x;
+                pos.x += chipSze.x * scale.x;// + offset.x;
                 stage[j, i].transform.localScale = scale;
                 stage[j, i].gameObject.SetActive(!isBack);
             }
-            pos.y -= ((chipSze.x * scale.x)) + offset.y;
+            pos.y -= ((chipSze.y * scale.y));// + offset.y;
         }
 
         return stage;
