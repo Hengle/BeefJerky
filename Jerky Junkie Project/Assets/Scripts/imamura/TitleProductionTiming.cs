@@ -35,42 +35,52 @@ public class TitleProductionTiming : MonoBehaviour {
     {
         SoundManager.Instance.PlaySE("CountDown");
     }
-    public void STARTSE()            //スタートのタイミングで。上のCountDownSEの後に
+
+    public void STARTSE()            //上のCountDownSEの後のスタートのタイミングで。
     {
         SoundManager.Instance.PlaySE("START");
     }
-    public void ENDSE()            //終わるタイミングで。上のCountDownSEの後に
+
+    public void ENDSE()            //上のCountDownSEの後の終わるタイミングで。
     {
         SoundManager.Instance.PlaySE("END");
     }
+
     public void DropExchangeSE()            //隣り合ったドロップを交換するタイミングで
     {
         SoundManager.Instance.PlaySE("DropExchange");
     }
-    public void BeefjerkyCreateSE()            //ジャーぎ―に変わったタイミングで
+
+    public void BeefjerkyCreateSE(int x,int y)            //ジャーキーに変わったタイミングで        エフェクト出現させたい位置のX,Y軸の入力をお願いします
     {
         SoundManager.Instance.PlaySE("BeefjerkyCreate");
+        EffectManager.Instance.PlayEffect("Beefjerky", new Vector2(x,y), 2.0f); 
     }
-    public void OSSANEatSE()            //おっさんが食べるときのSE。
+
+    public void OSSANEatSE(int x, int y)            //おっさんが食べるときのSE。        エフェクト出現させたい位置のX,Y軸の入力をお願いします
     {
         SoundManager.Instance.PlaySE("OSSANEat");
-        EffectManager.Instance.PlayEffect("Beefjerky", new Vector2(1, 1), 1.0f); //キー"effectA"に対応したEffectを表示する、Vector2型、指定した時間で消滅
+        EffectManager.Instance.PlayEffect("Beefjerky", new Vector2(x, y), 2.0f);
+    }
 
+    public void OSSANAscensionSE()                  //おっさん昇天時。
+    {
+        SoundManager.Instance.PlaySE("OSSANAscension");
     }
     //
 
-   
+
     void Update()           //テスト用
     {
         if (Input.GetKeyDown(KeyCode.A))
         {
-            OSSANEatSE();
-            
+            BeefjerkyCreateSE(0, 0);
+
         }
         if (Input.GetKeyDown(KeyCode.S))
         {
             DropExchangeSE();
         }
     }
-    
+
 }
