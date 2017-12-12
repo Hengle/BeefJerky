@@ -34,6 +34,7 @@ public class StageChip : MonoBehaviour {
         _character = target;
         _character.transform.SetParent(transform);
         //_character.transform.localPosition = Vector2.zero;
+        _character.MoveStart(position);
     }
 
     /// <summary>

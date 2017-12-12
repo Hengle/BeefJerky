@@ -11,7 +11,7 @@ public class WindowMove : MonoBehaviour {
 	{
 		if (down)
 		{
-			transform.position = Vector2.MoveTowards(transform.position,new Vector2(transform.position.x,downPosi));
+			//transform.position = Vector2.MoveTowards(transform.position,new Vector2(transform.position.x,downPosi));
 		}
 	}
 
