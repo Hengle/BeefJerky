@@ -33,7 +33,7 @@ public class StageChip : MonoBehaviour {
     public void AddCharacter(Character target) {
         _character = target;
         _character.transform.SetParent(transform);
-        _character.transform.localPosition = Vector2.zero;
+        //_character.transform.localPosition = Vector2.zero;
     }
 
     /// <summary>
@@ -42,5 +42,10 @@ public class StageChip : MonoBehaviour {
     /// <param name="targetChip"></param>
     public void MoveCharacter(StageChip targetChip) {
         AddCharacter(targetChip.RemoveCharacter());
+        //Debug.Log(Vector3.Lerp(_character.transform.position, targetChip.position, 0.5f));
     }
+
+    
+
+
 }
