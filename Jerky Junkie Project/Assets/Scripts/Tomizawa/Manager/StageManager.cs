@@ -24,6 +24,8 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     [SerializeField]
     private List<Character> characterPrefabs;
 
+    private bool updateFlag;
+
     // Use this for initialization
     void Start () {
         InitStage();
@@ -81,14 +83,14 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
         int line = Stage.GetLength(0) - 1;
         int length = Stage.GetLength(1);
         for (int i = 0; i < length; i++) {
-            if (Stage[line, i].stayCharacter) {
-                DeleteCharacter(Stage[line, i].stayCharacter);
+            if (Stage[i, line].stayCharacter) {
+                DeleteCharacter(Stage[i, line].stayCharacter);
             }
         }
     }
 
     private void DeleteCharacter(Character target) {
-        Destroy(target);
+        Destroy(target.gameObject);
     }
 
     public void GravityUpdate() {
@@ -108,5 +110,12 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     /// <returns></returns>
     private bool isDownSideChip(int x,int y) {
         return (y < Stage.GetLength(1) - 1);
+    }
+
+    /// <summary>
+    /// 更新の予約
+    /// </summary>
+    public void SetUpdate() {
+        updateFlag = true;
     }
 }

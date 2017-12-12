@@ -14,7 +14,7 @@ public class StageChip : MonoBehaviour {
     private void Update()
     {
         if (_character) {
-
+            StageManager.Instance.SetUpdate();
         }
     }
 
