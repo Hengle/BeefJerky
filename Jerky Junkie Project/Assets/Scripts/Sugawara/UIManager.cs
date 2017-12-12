@@ -15,9 +15,11 @@ public class UIManager : MonoBehaviour {
 
 	[SerializeField] private AudioSource[] audioSource = null;
 	private bool[] audioMute = { false,false}; //trueのときミュート
-	private float[] saveValue = { 0.0f, 0.0f };
+	public float[] saveValue = { 0.0f, 0.0f };
 	[SerializeField] private Image[] musicButtonImage = null;
 	[SerializeField] private Sprite[] musicButtonSprite = null;
+
+	[SerializeField] private Slider[] audioSlider = null;
 
 	private float maxT = 100f;
 	private float t;
@@ -58,17 +60,33 @@ public class UIManager : MonoBehaviour {
 	public void MusicButton(int audioNum)
 	{
 		audioMute[audioNum] = !audioMute[audioNum];
-		//saveValue[audioNum] = audioSource[audioNum].volume;
 
 		if (audioMute[audioNum])
 		{
+			saveValue[audioNum] = audioSource[audioNum].volume;
 			musicButtonImage[audioNum].sprite = musicButtonSprite[1];
-			//audioSource[audioNum].volume = 0.0f;
+			audioSource[audioNum].volume = 0.0f;
 		}
 		else 
 		{
 			musicButtonImage[audioNum].sprite = musicButtonSprite[0];
-			//audioSource[audioNum].volume = saveValue[audioNum];
+			audioSource[audioNum].volume = saveValue[audioNum];
+		}
+	}
+
+	public void OnValueChange(int audioNum)
+	{
+		if (audioMute[audioNum])
+		{
+			saveValue[audioNum] = audioSlider[audioNum].value;
+		}
+		else
+		{
+			audioSource[audioNum].volume = audioSlider[audioNum].value;
+		}
+		if(audioNum == 1)
+		{
+			SoundManager.Instance.PlaySE("Bottan");
 		}
 	}
 
@@ -76,4 +94,5 @@ public class UIManager : MonoBehaviour {
 	{
 		//タイトルシーンへ遷移
 	}
+
 }
