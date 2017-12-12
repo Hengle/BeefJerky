@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// ステージのマネージャーClass
@@ -14,34 +15,41 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     private Vector2 StageSize,DefaultPosition;
 
 
-    //[SerializeField]
-    //private Sprite[] data;//使用するマス画像
+    [SerializeField]
+    private Sprite[] data;//使用するマス画像
     //[SerializeField]
     //private Vector2 spriteSize;//画像の基本サイズ
     [SerializeField]
     private StageChip StageChipPrefab;
     [SerializeField]
-    private Vector2 chipSze,offset;
+    private Vector2 chipSze;//,offset;//余白は無し
     [SerializeField]
     private List<Character> characterPrefabs;
 
     private bool updateFlag;
+    public bool stopFlag;
 
     // Use this for initialization
     void Start () {
         Stage = InitStage();
-        Debug.Log(Stage.GetLength(0));
         backGroundStage = InitStage(true);
         CharacterInit(Stage);
         CharacterInit(backGroundStage);
-        Debug.Log(backGroundStage[0,0].stayCharacter);
 	}
 
     private void Update()
     {
-        foreach (StageChip chip in backGroundStage) {
-            if (chip.stayCharacter == null)
-                chip.AddCharacter(InitCharacter());
+        if (Time.timeScale == 0 || stopFlag) return;
+        //キャラクターが削除された時など、必要な時のみ処理する
+        if (updateFlag) {
+            updateFlag = false;
+            GravityUpdate();
+
+            foreach (StageChip chip in backGroundStage)
+            {
+                if (chip.stayCharacter == null)
+                    chip.AddCharacter(InitCharacter());
+            }
         }
     }
 
@@ -51,7 +59,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     private StageChip[,] InitStage(bool isBack = false)
     {
         Vector2 InitStageSize = StageSize;
-        StageSize.x += offset.x;//右端に余白
+        //StageSize.x += offset.x;//右端に余白
         StageChip[,] stage = new StageChip[x, y];
         ////ステージの左上の場所を取得
         //Vector2 leftUpSide = new Vector2(-StageSize.x / 2, StageSize.y / 2) + DefaultPosition;//ステージ左上のポジションを取得
@@ -62,7 +70,8 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
         //scale.x = res;
 
         Vector2 leftUpSide = new Vector2(-StageSize.x / 2, StageSize.y / 2) + DefaultPosition;
-        Vector2 scale = new Vector2((InitStageSize.x / ((chipSze.x) * x + offset.x)), (InitStageSize.y / ((chipSze.y) * y + offset.y)));
+        //Vector2 scale = new Vector2((InitStageSize.x / ((chipSze.x) * x + offset.x)), (InitStageSize.y / ((chipSze.y) * y + offset.y)));
+        Vector2 scale = new Vector2((InitStageSize.x / ((chipSze.x) * x)), (InitStageSize.y / ((chipSze.y) * y)));
 
         GameObject parent;
         if (isBack)
@@ -80,13 +89,15 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
             pos.x = leftUpSide.x + ((chipSze.x * scale.x) * 0.5f);
             for (int j = 0; j < x; j++) {
                 stage[j, i] = Instantiate(StageChipPrefab, parent.transform);//StageChip.InitStageChip(data[j % data.Length]);
+                Image image = stage[j, i].GetComponent<Image>();
+                image.sprite = data[(i + j) % data.Length];
                 stage[j, i].transform.localPosition = pos;
                 //次に配置するマスの位置を計算
-                pos.x += chipSze.x * scale.x + offset.x;
+                pos.x += chipSze.x * scale.x;// + offset.x;
                 stage[j, i].transform.localScale = scale;
                 stage[j, i].gameObject.SetActive(!isBack);
             }
-            pos.y -= ((chipSze.x * scale.x)) + offset.y;
+            pos.y -= ((chipSze.y * scale.y));// + offset.y;
         }
 
         return stage;
@@ -99,7 +110,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     private void CharacterInit(StageChip[,] stage) {
         foreach (StageChip chips in stage) {
             Character character = InitCharacter();
-            chips.AddCharacter(character);
+            chips.AddCharacter(character,true);
         }
     }
 
@@ -107,11 +118,17 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     /// 一番下の行のCharacterを全て削除する
     /// </summary>
     public void DeleteDownLineCharacter() {
-        int line = Stage.GetLength(1) - 1;
-        int length = Stage.GetLength(0);
-        for (int i = 0; i < length; i++) {
-            if (Stage[i, line].stayCharacter) {
-                DeleteCharacter(Stage[i, line].stayCharacter);
+        //int line = Stage.GetLength(1) - 1;
+        //int length = Stage.GetLength(0);
+        //for (int i = 0; i < length; i++) {
+        //    if (Stage[i, line].stayCharacter) {
+        //        DeleteCharacter(Stage[i, line].stayCharacter);
+        //        DeleteCharacter(Stage[i, line - 1].stayCharacter);
+        //    }
+        //}
+        foreach (StageChip chip in Stage) {
+            if (chip.stayCharacter) {
+                DeleteCharacter(chip.stayCharacter);
             }
         }
     }
@@ -122,6 +139,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     /// <param name="target"></param>
     private void DeleteCharacter(Character target) {
         Destroy(target.gameObject);
+        updateFlag = true;
     }
 
     /// <summary>
@@ -172,7 +190,6 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 
         if (!isBack)
         {
-            Debug.Log(y);
             if (y == 0) {
                 if (backGroundStage[x, backGroundStage.GetLength(1) - 1].stayCharacter)
                 {
@@ -195,7 +212,6 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
         }
 
         if (isBack) {
-            Debug.Log(backGroundStage.GetLength(0) + ":" + backGroundStage.GetLength(1) + ";" + y);
             if (backGroundStage[x, y - 1].stayCharacter) {
                 if (y == backGroundStage.GetLength(1)) {
                     backGroundStage[x, y].MoveCharacter(Stage[x, 0]);
@@ -222,5 +238,11 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     /// </summary>
     public void SetUpdate() {
         updateFlag = true;
+    }
+
+    public void RandDelete(int num)
+    {
+        for (int i = 0; i < num; i++)
+            DeleteCharacter(Stage[Random.Range(0, Stage.GetLength(0)), Random.Range(0, Stage.GetLength(1))].stayCharacter);
     }
 }

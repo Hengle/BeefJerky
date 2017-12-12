@@ -30,11 +30,13 @@ public class StageChip : MonoBehaviour {
     /// <summary>
     /// このマスにCharacterを追加する処理
     /// </summary>
-    public void AddCharacter(Character target) {
+    public void AddCharacter(Character target, bool isInit = false) {
         _character = target;
         _character.transform.SetParent(transform);
-        //_character.transform.localPosition = Vector2.zero;
-        _character.MoveStart(position);
+        if (isInit)
+            _character.transform.localPosition = Vector2.zero;
+        else
+            _character.MoveStart(position);
     }
 
     /// <summary>
