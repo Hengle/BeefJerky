@@ -74,7 +74,7 @@ public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
 				Height = CharaData [0].m_CharacterSprite.GetComponent<RectTransform> ().sizeDelta.y;
 
 				Vector2 vec2Pos = new Vector2 (InitPos.position.x + Width * j,InitPos.position.y - Height * i);
-				RandomCreate(i,j, vec2Pos,0,CharaData.Length - 1);
+				RandomCreate(i,j, vec2Pos,0,CharaData.Length);
 
 			}
 		}
@@ -214,6 +214,40 @@ public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
 		CharacterInstance [x_Num,y_Num].m_SpriteNum = CharaData.Length + 1;
 	}
 
+	internal void CombinationSearch(int x,int y){
+		List<CharacterData> list = new List<CharacterData>();
+		switch (CharacterInstance [x, y].m_SpriteNum) {
+		case 0://牛 仲間がいたらまとまってジャーキーになる
+			
+			search (0,ref list, x, y);
+			if (list.Count >= 4)
+				RootDestoryInstance (ref list);//とりあえず削除
+			break;
+		default:
+			
+			break;
+		}
+	}
+
+	internal void Combination(int num,List<CharacterData> list){
+		switch (num) {
+		case 0:
+			foreach (CharacterData data in list)
+				if (data.m_CharacterSprite)
+					Destroy (data.m_CharacterSprite);
+			break;
+		case 1:
+			foreach (CharacterData data in list)
+				if (data.m_CharacterSprite)
+					Destroy (data.m_CharacterSprite);
+			break;
+		case 2:
+			break;
+		case 3:
+			break;
+		}
+	}
+
 	internal void RootDestoryInstance(ref List<CharacterData> objList)
 	{
 		for (int i = 0; i < objList.Count; i++) {
@@ -255,12 +289,30 @@ public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
 		CharacterInstance [i + l_x, j + l_y].m_SpriteNum = _afterI;
 	}
 
-	public void DirectionObjMove(GameObject DropX,GameObject DropY)
+	//internal void DirectionObjMove(CharacterData DropX,CharacterData DropY)
+	internal void DirectionObjMove(int x1,int y1,int x2,int y2)
 	{
+		CharacterData data = CharacterInstance [x1, y1];
+		CharacterInstance [x1, y1] = CharacterInstance [x2, y2];
+		CharacterInstance [x2, y2] = data;
+		CharacterData DropX = CharacterInstance [x1, y1];
+		CharacterData DropY = CharacterInstance [x2, y2];
+
 		Vector3 after;
-		after = DropX.GetComponent<RectTransform>().position;
-		DropX.GetComponent<RectTransform>().position = DropY.GetComponent<RectTransform>().position;
-		DropY.GetComponent<RectTransform>().position = after;
-//
+		after = DropX.m_CharacterSprite.GetComponent<RectTransform>().position;
+		DropX.m_CharacterSprite.GetComponent<RectTransform>().position = DropY.m_CharacterSprite.GetComponent<RectTransform>().position;
+		DropY.m_CharacterSprite.GetComponent<RectTransform>().position = after;
+
+		/*
+		string afterName;
+		afterName = DropX.m_SpriteName;
+		DropX.m_SpriteName = DropY.m_SpriteName;
+		DropY.m_SpriteName = afterName;
+
+		int afterNum;
+		afterNum = DropX.m_SpriteNum;
+		DropX.m_SpriteNum = DropY.m_SpriteNum;
+		DropY.m_SpriteNum = afterNum;
+		*/
 	}
 }
