@@ -1,8 +1,15 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:Jerky Junkie Project/Assets/Prefabs/Tujino_Junki.meta
 guid: b7efb0865430e5b4d9d49269f049385e
 folderAsset: yes
 timeCreated: 1513062292
 licenseType: Pro
+=======
+guid: 43207dec6f27d9b4a8b8215ae0bf6423
+folderAsset: yes
+timeCreated: 1513001866
+licenseType: Free
+>>>>>>> origin/Puzzle:Jerky Junkie Project/Assets/Scripts/Tomizawa.meta
 DefaultImporter:
   userData: 
   assetBundleName: 
