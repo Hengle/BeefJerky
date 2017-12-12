@@ -32,11 +32,9 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     // Use this for initialization
     void Start () {
         Stage = InitStage();
-        Debug.Log(Stage.GetLength(0));
         backGroundStage = InitStage(true);
         CharacterInit(Stage);
         CharacterInit(backGroundStage);
-        Debug.Log(backGroundStage[0,0].stayCharacter);
 	}
 
     private void Update()
@@ -120,11 +118,17 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     /// 一番下の行のCharacterを全て削除する
     /// </summary>
     public void DeleteDownLineCharacter() {
-        int line = Stage.GetLength(1) - 1;
-        int length = Stage.GetLength(0);
-        for (int i = 0; i < length; i++) {
-            if (Stage[i, line].stayCharacter) {
-                DeleteCharacter(Stage[i, line].stayCharacter);
+        //int line = Stage.GetLength(1) - 1;
+        //int length = Stage.GetLength(0);
+        //for (int i = 0; i < length; i++) {
+        //    if (Stage[i, line].stayCharacter) {
+        //        DeleteCharacter(Stage[i, line].stayCharacter);
+        //        DeleteCharacter(Stage[i, line - 1].stayCharacter);
+        //    }
+        //}
+        foreach (StageChip chip in Stage) {
+            if (chip.stayCharacter) {
+                DeleteCharacter(chip.stayCharacter);
             }
         }
     }
@@ -186,7 +190,6 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 
         if (!isBack)
         {
-            Debug.Log(y);
             if (y == 0) {
                 if (backGroundStage[x, backGroundStage.GetLength(1) - 1].stayCharacter)
                 {
@@ -209,7 +212,6 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
         }
 
         if (isBack) {
-            Debug.Log(backGroundStage.GetLength(0) + ":" + backGroundStage.GetLength(1) + ";" + y);
             if (backGroundStage[x, y - 1].stayCharacter) {
                 if (y == backGroundStage.GetLength(1)) {
                     backGroundStage[x, y].MoveCharacter(Stage[x, 0]);
@@ -238,13 +240,9 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
         updateFlag = true;
     }
 
-    public void RandDelete()
+    public void RandDelete(int num)
     {
-        DeleteCharacter(Stage[Random.Range(0, Stage.GetLength(0)), Random.Range(0, Stage.GetLength(1))].stayCharacter);
-    }
-
-    struct masu {
-        public int num;
-        public GameObject obj;
+        for (int i = 0; i < num; i++)
+            DeleteCharacter(Stage[Random.Range(0, Stage.GetLength(0)), Random.Range(0, Stage.GetLength(1))].stayCharacter);
     }
 }
