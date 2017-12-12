@@ -20,11 +20,15 @@ public class WindowMove : MonoBehaviour {
 	{
 		if (down)
 		{
+<<<<<<< HEAD
 			rectTransform.DOMoveY(downPosition,speed).SetUpdate(true);
 		}
 		else
 		{
 			rectTransform.DOMoveY(upPosition, speed).SetUpdate(true);
+=======
+			//transform.position = Vector2.MoveTowards(transform.position,new Vector2(transform.position.x,downPosi));
+>>>>>>> 8bcd0eb4770d77d287da3a5bd3e88eaf10e038da
 		}
 	}
 

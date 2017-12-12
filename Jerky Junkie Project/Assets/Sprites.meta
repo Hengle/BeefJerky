@@ -1,8 +1,15 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
 guid: ec16e138a1dae9b43b4255df75ad3285
 folderAsset: yes
 timeCreated: 1513042823
 licenseType: Pro
+=======
+guid: 47377304ef9fdad41bcb3b920c0341e7
+folderAsset: yes
+timeCreated: 1513053358
+licenseType: Free
+>>>>>>> origin/Puzzle
 DefaultImporter:
   userData: 
   assetBundleName: 
