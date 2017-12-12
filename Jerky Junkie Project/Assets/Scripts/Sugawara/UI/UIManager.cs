@@ -23,6 +23,8 @@ public class UIManager : MonoBehaviour {
 
 	[SerializeField] private ScenesManager sceneManager = null;
 
+	[SerializeField] private WindowMove windowMove = null;
+
 	private float maxT = 100f;
 	private float t;
 
@@ -31,7 +33,7 @@ public class UIManager : MonoBehaviour {
 	private void Start()
 	{
 		t = maxT;
-		pauseWindow.SetActive(false);
+		//pauseWindow.SetActive(false);
 		GameObject soundObj = GameObject.Find("SoundManager");
 		audioSource[0] = soundObj.transform.Find("BGMManager").GetComponent<AudioSource>();
 		audioSource[1] = soundObj.transform.Find("SEManager").GetComponent<AudioSource>();
@@ -58,7 +60,8 @@ public class UIManager : MonoBehaviour {
 	public void Pause()
 	{
 		pause = !pause;
-		pauseWindow.SetActive(pause);
+	//	pauseWindow.SetActive(pause);
+		windowMove.MoveOn(pause);
 		if (pause)
 		{
 			pauseButtonImage.sprite = pauseButtonSprite[1];
