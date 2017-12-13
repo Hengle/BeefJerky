@@ -6,6 +6,7 @@ using UnityEngine;
 /// ステージに配置されるマスClass
 /// </summary>
 public class StageChip : MonoBehaviour {
+    public int[] path;
     public Vector2 position { get { return transform.position; } }
     public Character stayCharacter { get { return _character; } }
     [SerializeField]
@@ -33,6 +34,7 @@ public class StageChip : MonoBehaviour {
     public void AddCharacter(Character target, bool isInit = false) {
         _character = target;
         //_character.transform.SetParent(transform);
+        _character.data.path = new int[] { path[0], path[1] };
         if (isInit)
             _character.transform.position = position;
         else

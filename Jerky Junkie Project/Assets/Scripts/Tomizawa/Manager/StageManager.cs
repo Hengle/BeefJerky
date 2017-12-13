@@ -14,21 +14,41 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     private int x, y;//Stageの大きさ
     [SerializeField]//ステージ枠の大きさ ステージの中心位置
     private Vector2 StageSize,DefaultPosition;
-
-
+    
     [SerializeField]
     private Sprite[] data;//使用するマス画像
-    //[SerializeField]
-    //private Vector2 spriteSize;//画像の基本サイズ
     [SerializeField]
     private StageChip StageChipPrefab;
     [SerializeField]
     private Vector2 chipSze;//,offset;//余白は無し
     [SerializeField]
-    public List<Character> characterPrefabs;
+	public List<Character> characterPrefabs;
+	[SerializeField]
+	public Character beefjarkeyPrefab;
 
     private bool updateFlag;
     public bool stopFlag;
+
+    //演出などの待機するべき処理がいくつ実行中か　０になった時、おじさんとジャーキーの組み合わせなどを確認する
+    [SerializeField]
+    private int _count;
+    public void MoveStart() {
+        _count++;
+        isWaiting = true;
+    }
+    public void MoveEnd() { _count--; }
+    [SerializeField]
+    private bool isWaiting;
+    public bool isMoveWaitEnd {
+        get {
+            if (isWaiting && _count == 0) {
+                isWaiting = false;
+                return true;
+            }
+            return false;
+        }
+    }
+
 
     // Use this for initialization
     void Start () {
@@ -38,7 +58,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
         CharacterInit(backGroundStage,true);
         //CharacterManager2.Instance.CharactersDateInitialize(characterPrefabs);
         foreach (Character c in characterPrefabs) {
-            Debug.Log(c.data.m_SpriteNum);
+            Debug.Log(c.data.m_DropType);
         }
 	}
 
@@ -54,6 +74,29 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
             {
                 if (chip.stayCharacter == null)
                     chip.AddCharacter(InitCharacter(true));
+            }
+        }
+
+        if (isMoveWaitEnd) {
+            CombinationUpdate();
+            Debug.Log("waitEnd");
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space)) {
+            //おじさんとジャーキーの隣合わせ確認用
+            Debug.Log("enter");
+            CombinationUpdate();
+        }
+    }
+
+    //ステージに配置されているキャラクターの組み合わせ確認
+    public void CombinationUpdate() {
+        for (int i = 0; i < Stage.GetLength(0); i++) {
+            for (int j = 0; j < Stage.GetLength(1); j++) {
+                if (Stage[i, j].stayCharacter.data.m_DropType == DropType.ozisan) {
+                    List<GameObject> characters = new List<GameObject>() { Stage[i, j].stayCharacter.gameObject };
+                    CharacterManager2.Instance.Combination(characters, DropType.ozisan, i, j);
+                }
             }
         }
     }
@@ -96,6 +139,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
                 stage[j, i] = Instantiate(StageChipPrefab, parent.transform);//StageChip.InitStageChip(data[j % data.Length]);
                 Image image = stage[j, i].GetComponent<Image>();
                 image.sprite = data[(i + j) % data.Length];
+                stage[j, i].path = new int[] { j, i };
                 stage[j, i].transform.localPosition = pos;
                 //次に配置するマスの位置を計算
                 pos.x += chipSze.x * scale.x;// + offset.x;
@@ -279,4 +323,40 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
         for (int i = 0; i < num; i++)
             DeleteCharacter(Stage[Random.Range(0, Stage.GetLength(0)), Random.Range(0, Stage.GetLength(1))].stayCharacter);
     }
+
+	public StageChip GetStageChip(GameObject checkMapObj)
+	{
+		StageChip output = null;
+		foreach (StageChip _output in Stage) {
+			if (_output.stayCharacter.gameObject == checkMapObj) {
+				output = _output;
+				break;
+			}
+		}
+
+		return output;
+	}
+
+	public void SetStageChip(StageChip _stageChip)
+	{
+		foreach (StageChip _output in Stage) {
+			if (_output.gameObject == _stageChip.gameObject) {
+				//_output = _stageChip;
+				break;
+			}
+		}
+	}
+
+	public void CreateBeefjarkey(GameObject checkMapObj)
+	{
+		StageChip _stageChip;
+		_stageChip = GetStageChip (checkMapObj);
+		Debug.Log (_stageChip.stayCharacter);
+		DeleteCharacter(_stageChip.stayCharacter);
+
+        Character beef = Instantiate(beefjarkeyPrefab);//CharacterManager2.Instance.CreateCharacter ((int)DropType.jaki);
+		_stageChip.AddCharacter (beef, true);
+		beef.transform.SetParent (CharacterParent.transform);
+		//SetStageChip (_stageChip);
+	}
 }

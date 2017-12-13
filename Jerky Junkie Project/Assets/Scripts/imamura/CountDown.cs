@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+//空のゲームオブジェクトに割り当てて利用
+
 public class CountDown : MonoBehaviour {
      bool enableFade = false;
      bool enableFadeIn = false;
@@ -18,28 +20,42 @@ public class CountDown : MonoBehaviour {
     Text text;
 
     [SerializeField] private TitleProductionTiming titleScript = null;
-
-	private void Start()
-	{
-		CountDownStart(true,2.9f);
-	}
+    
 
 	public void CountDownStart (bool SorE,float time)                   //こいつを起動させれば起動      trueならスタート前。　falseなら終わり前.1の桁が前回と変わるタイミングで呼ぶ
     {
-        time += 1;//3.0,2.9999,2.9,2.8,2.7,,,は３と表示するため、後の作業を楽にするための＋１
-        if (time < 4 && time >= 0)
+        if ((time <= 4 && time >= 0))
         {
             countDownTextNumber = time - (time % 1);
             count = time % 1;
+            if (count == 0)
+            {
+                count = 1;
+            }
             countDownStart.enabled = true;
             setAlpha(countDownStart, count);
 
             enableFade = true;
             enableFadeIn = true;
             Mozi = SorE;
-            if (time % 1 > 0.9f)
+            if (countDownTextNumber == 0)
             {
-                titleScript.CountDownSE();//減った時に呼ばれた時（2.999…）になるため動く。増えた時でも0.9秒ならば１秒のカウント音がなっても違和感わない。
+                if (Mozi)
+                {
+                    countDownStart.text = "GO!";
+                    titleScript.STARTSE();
+                }
+                else
+                {
+                    countDownStart.text = "END";
+                    titleScript.ENDSE();
+                }
+            }
+            else
+            {
+                countDownStart.text = "" + countDownTextNumber;        //intをstringへ変換できないマンですごめんなさい
+                titleScript.CountDownSE();
+
             }
         }
     }
@@ -50,24 +66,7 @@ public class CountDown : MonoBehaviour {
 
     void Update()
     {
-        if (countDownTextNumber == 0)
-        {
-            if (Mozi)
-            {
-                countDownStart.text = "GO!";
-                titleScript.STARTSE();
-            }
-            else
-            {
-                countDownStart.text = "END";
-                titleScript.ENDSE();
-            }
-        }
-        else
-        {
-            countDownStart.text = "" + countDownTextNumber;        //intをstringへ変換できないマンですごめんなさい
-            
-        }
+        
         if (enableFadeIn)
             {
                 FadeIn(countDownStart);
@@ -88,12 +87,11 @@ public class CountDown : MonoBehaviour {
                     enableFadeIn = false;
                     countDownStart.enabled = false;
                 }
-                else
-                {
-                    titleScript.CountDownSE();
-                    count = 1;
-                    countDownTextNumber--;
-                }
+                //else
+                //{
+                //    count = 1;
+                //    countDownTextNumber--;
+                //}
             }
         }
     }

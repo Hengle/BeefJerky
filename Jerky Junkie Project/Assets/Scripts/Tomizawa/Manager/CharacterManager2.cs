@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
@@ -8,10 +9,11 @@ public struct CharacterData2
     public Sprite m_CharacterSprite;
     public string m_SpriteName;
     [SerializeField]
-    internal DropType m_SpriteNum;
+    internal DropType m_DropType;
+    public int[] path;
 }
 
-enum DropType {
+public enum DropType {
     usi,//牛
     jaki,//ジャーキー
     ozisan,//おじさん
@@ -87,7 +89,7 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
     /// <param name="num"></param>
     /// <returns></returns>
     public CharacterData2 CreateCharacterData(int num) {
-        Debug.Log(charactersData[num].m_SpriteNum);
+        Debug.Log(charactersData[num].m_DropType);
         return charactersData[num];
     }
 
@@ -151,81 +153,83 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
     }
 
     /// <summary>
-    /// 
+    /// 周囲にいる同タイプのCharacterを探し、繋がっているもの全てを返す処理
     /// </summary>
-    internal void search(int num, ref List<Character> objList, int x, int y)
+    /// <param name="type">探索対象のキャラクタータイプ</param>
+    /// <param name="objList">発見済みのCharacterリスト</param>
+    /// <param name="x">探索基準点x</param>
+    /// <param name="y">探索基準点y</param>
+    /// <param name="isBomb">探索先が違うtypeでもListに含めるか　爆発の場合はtrueに</param>
+    /// <param name="isCircle">斜めの位置も見るか　爆発の場合はtrueに</param>
+    /// /// <param name="limit">探索する限界距離</param>
+    internal void search(DropType type,List<GameObject> objList, int x, int y,bool isBomb = false,bool isCircle = false,int limit = 100)
     {
-        /*
-        int direction = -1;
+        if (limit <= 0) return;
         int _x, _y;
-
-        int[,] dirs = new int[,] { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
+        
+        int[,] dirs = isCircle ?
+            //爆発の場合は斜めも見るので、合計９要素の配列
+            new int[,] { { 1, 1 }, { 1, 0 }, { 1, -1 }, { 0, 1 }, { 0, 0 }, { 0, -1 }, { -1, 1 }, { -1, 0 }, { -1, -1 } } :
+            //通常の場合なら上下左右の４要素
+            new int[,] { { 1, 0 }, { 0, 1 }, { 0, -1 }, { -1, 0 } };
         for(int i = 0;i < dirs.GetLength(0);i++) {
+            //探索先の座標が存在するか確認　存在しなければcontinue
             _x = x + dirs[i, 0];
-            _x = (_x < 0 ? 0 : (_x >= StageManager.Instance.StageLength[0] ? StageManager.Instance.StageLength[0] - 1 : _x));
-            _y = y + dirs[i, 1];
+            if (_x < 0 || _x >= StageManager.Instance.StageLength[0]) continue;
+            //_x = (_x < 0 ? 0 : (_x >= StageManager.Instance.StageLength[0] ? StageManager.Instance.StageLength[0] - 1 : _x));
+            _y = y + dirs[i, 
+                1];
+            if (_y < 0 || _y >= StageManager.Instance.StageLength[1]) continue;
             _y = (_y < 0 ? 0 : (_y >= StageManager.Instance.StageLength[1] ? StageManager.Instance.StageLength[1] - 1 : _y));
 
+            GameObject chara = objList.Find(z => z == StageManager.Instance.Stage[_x, _y].stayCharacter.gameObject);
+            //探索先が同タイプでリストに含まれていない場合、探索先をリストに含めた後さらにそこから探索を開始する
+            if (chara == null && StageManager.Instance.Stage[_x, _y].stayCharacter.data.m_DropType == type) {
+                objList.Add(StageManager.Instance.Stage[_x, _y].stayCharacter.gameObject);
+                search(type,objList, _x, _y,isBomb,isCircle,--limit);
+            }
+            else if(isBomb){
+                //爆発の場合、探索先をListに含めて処理を終了する
+            }
+        }
+    }
 
-            GameObject up = objList.Find(z => z.gameObject == StageManager.Instance.Stage[_x, _y].stayCharacter.gameObject);
-            if (up.m_CharacterSprite == null && CharacterInstance[_x, _y].m_SpriteNum == num) {
-                DestroyCount++;
-                objList.Add(CharacterInstance[_x, _y]);
-                search(num, ref objList, _x, _y);
-            }
+    /// <summary>
+    /// キャラクターの組み合わせ効果の発動
+    /// </summary>
+    /// <param name="characters"></param>
+    /// <param name="type"></param>
+    public void Combination(List<GameObject> characters, DropType type, int x = 0,int y = 0) {
+        switch (type) {
+            case DropType.usi:
+                //４つ繋がっていたら一つのジャーキーになる
+                if (characters.Count >= 4) {
+                    RootDestoryInstance(characters);
+                }
+                break;
+            case DropType.ozisan:
+                //ジャーキーと隣あったら、そのジャーキーと繋がっている全てのジャーキーを消滅させる
+                search(DropType.jaki, characters, x, y);
+                //同時に、消したキャラクターの周囲１マス内（斜め含む）にあるビールを消滅させる
+                search(DropType.jaki, characters, x, y, true);
+                List<GameObject> charas = new List<GameObject>(characters);
+                bool isJaki = false;//ジャーキーが一つでも存在するか確認
+                foreach (GameObject c in charas) {
+                    Character character = c.GetComponent<Character>();
+                    Debug.Log(character.data.m_DropType);
+                    if (character.data.m_DropType == DropType.jaki) {
+                        search(DropType.biru, characters, character.data.path[0], character.data.path[1], false, true, 1);
+                        isJaki = true;
+                    }
+                }
+                if (!isJaki) break;//ジャーキーが無ければ消さない
+                RootDestoryInstance(characters);
+                break;
+            case DropType.jaki:
+            case DropType.biru:
+            default:
+                break;
         }
-
-        // 上探索
-        _x = x != 0 ? x + direction : 0;
-        if (CharacterInstance[_x, y].m_SpriteNum != CharaData.Length + 1)
-        {
-            CharacterData up = objList.Find(z => z.m_CharacterSprite.GetInstanceID() == CharacterInstance[_x, y].m_CharacterSprite.GetInstanceID());
-            if (up.m_CharacterSprite == null && CharacterInstance[_x, y].m_SpriteNum == num)
-            {
-                DestroyCount++;
-                objList.Add(CharacterInstance[_x, y]);
-                search(num, ref objList, _x, y);
-            }
-        }
-        // 左探索
-        _y = y != 0 ? y + direction : 0;
-        if (CharacterInstance[x, _y].m_SpriteNum != CharaData.Length + 1)
-        {
-            CharacterData left = objList.Find(z => z.m_CharacterSprite.GetInstanceID() == CharacterInstance[x, _y].m_CharacterSprite.GetInstanceID());
-            if (left.m_CharacterSprite == null && CharacterInstance[x, _y].m_SpriteNum == num)
-            {
-                DestroyCount++;
-                objList.Add(CharacterInstance[x, _y]);
-                search(num, ref objList, x, _y);
-            }
-        }
-
-        direction *= -1;
-        // 下探索
-        _x = x != CharacterInstance.GetLength(0) - 1 ? x + direction : CharacterInstance.GetLength(0) - 1;
-        if (CharacterInstance[_x, y].m_SpriteNum != CharaData.Length + 1)
-        {
-            CharacterData down = objList.Find(z => z.m_CharacterSprite.GetInstanceID() == CharacterInstance[_x, y].m_CharacterSprite.GetInstanceID());
-            if (down.m_CharacterSprite == null && CharacterInstance[_x, y].m_SpriteNum == num)
-            {
-                DestroyCount++;
-                objList.Add(CharacterInstance[_x, y]);
-                search(num, ref objList, _x, y);
-            }
-        }
-        // 右探索
-        _y = y != CharacterInstance.GetLength(1) - 1 ? y + direction : CharacterInstance.GetLength(1) - 1;
-        if (CharacterInstance[x, _y].m_SpriteNum != CharaData.Length + 1)
-        {
-            CharacterData right = objList.Find(z => z.m_CharacterSprite.GetInstanceID() == CharacterInstance[x, _y].m_CharacterSprite.GetInstanceID());
-            if (right.m_CharacterSprite == null && CharacterInstance[x, _y].m_SpriteNum == num)
-            {
-                DestroyCount++;
-                objList.Add(CharacterInstance[x, _y]);
-                search(num, ref objList, x, _y);
-            }
-        }
-        */
     }
 
     /**
@@ -236,7 +240,7 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
     internal void CombinationSearch(int x, int y)
     {
         List<CharacterData> list = new List<CharacterData>();
-        switch (StageManager.Instance.Stage[x, y].stayCharacter.data.m_SpriteNum)
+        switch (StageManager.Instance.Stage[x, y].stayCharacter.data.m_DropType)
         {
             case 0://牛 仲間がいたらまとまってジャーキーになる
                 //search(CharaNum["Gyu"], ref list, x, y);
@@ -252,8 +256,8 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
 
     public bool getObjFlg(int x, int y)
     {
-        Debug.Log(StageManager.Instance.Stage[x, y].stayCharacter.data.m_SpriteNum);
-        return StageManager.Instance.Stage[x, y].stayCharacter.data.m_SpriteNum == DropType.usi;
+        Debug.Log(StageManager.Instance.Stage[x, y].stayCharacter.data.m_DropType);
+        return StageManager.Instance.Stage[x, y].stayCharacter.data.m_DropType == DropType.usi;
     }
 
     /*
