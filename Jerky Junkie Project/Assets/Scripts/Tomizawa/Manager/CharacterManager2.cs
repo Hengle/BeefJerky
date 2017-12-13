@@ -208,6 +208,7 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
                 if (StageManager.Instance.Stage[x, y].character.isChecked) break;
                 //ジャーキーと隣あったら、そのジャーキーと繋がっている全てのジャーキーを消滅させる
                 search(DropType.jaki, characters, x, y);
+                Debug.Log(characters.Count);
                 //同時に、消したキャラクターの周囲１マス内（斜め含む）にあるビールを消滅させる
                 search(DropType.jaki, characters, x, y, true);
                 List<GameObject> charas = new List<GameObject>(characters);
