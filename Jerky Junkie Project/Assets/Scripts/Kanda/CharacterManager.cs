@@ -36,7 +36,7 @@ public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
 	Transform InitPos;			//!< 二次元配列のスタート地点
 	Transform Box;				//!< 親設定のための Transform
 
-	[SerializeField, TooltipAttribute("縦の長さ"),Space(30)]　
+	[SerializeField, TooltipAttribute("オブジェクトデータ"),Space(30)]　
 	private CharacterData[] CharaData;					
 	private Dictionary<string,int> CharaNum = new Dictionary<string, int>();
 

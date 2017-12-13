@@ -25,7 +25,9 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     [SerializeField]
     private Vector2 chipSze;//,offset;//余白は無し
     [SerializeField]
-    public List<Character> characterPrefabs;
+	public List<Character> characterPrefabs;
+	[SerializeField]
+	public Character beefjarkeyPrefab;
 
     private bool updateFlag;
     public bool stopFlag;
@@ -279,4 +281,40 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
         for (int i = 0; i < num; i++)
             DeleteCharacter(Stage[Random.Range(0, Stage.GetLength(0)), Random.Range(0, Stage.GetLength(1))].stayCharacter);
     }
+
+	public StageChip GetStageChip(GameObject checkMapObj)
+	{
+		StageChip output = null;
+		foreach (StageChip _output in Stage) {
+			if (_output.stayCharacter.gameObject == checkMapObj) {
+				output = _output;
+				break;
+			}
+		}
+
+		return output;
+	}
+
+	public void SetStageChip(StageChip _stageChip)
+	{
+		foreach (StageChip _output in Stage) {
+			if (_output.gameObject == _stageChip.gameObject) {
+				//_output = _stageChip;
+				break;
+			}
+		}
+	}
+
+	public void CreateBeefjarkey(GameObject checkMapObj)
+	{
+		StageChip _stageChip;
+		_stageChip = GetStageChip (checkMapObj);
+		Debug.Log (_stageChip.stayCharacter);
+		DeleteCharacter(_stageChip.stayCharacter);
+
+		Character beef = CharacterManager2.Instance.CreateCharacter ((int)DropType.jaki);
+		_stageChip.AddCharacter (beef, true);
+		beef.transform.SetParent (CharacterParent.transform);
+		//SetStageChip (_stageChip);
+	}
 }
