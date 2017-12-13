@@ -36,7 +36,12 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
         _count++;
         isWaiting = true;
     }
-    public void MoveEnd() { _count--; }
+    [SerializeField]
+    private bool isMoveEnd = true;
+    public void MoveEnd() {
+        _count--;
+        isMoveEnd = true;
+    }
     [SerializeField]
     private bool isWaiting;
     public bool isMoveWaitEnd {
@@ -72,30 +77,34 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 
             foreach (StageChip chip in backGroundStage)
             {
-                if (chip.stayCharacter == null)
+                if (chip.holdCharacter == null)
                     chip.AddCharacter(InitCharacter(true));
             }
         }
-
+        if (isMoveEnd) {
+            CombinationUpdate();
+            isMoveEnd = false;
+        }
+        /*
         if (isMoveWaitEnd) {
             CombinationUpdate();
             Debug.Log("waitEnd");
         }
-
+        /*
         if (Input.GetKeyDown(KeyCode.Space)) {
             //おじさんとジャーキーの隣合わせ確認用
             Debug.Log("enter");
             CombinationUpdate();
-        }
+        }*/
     }
 
     //ステージに配置されているキャラクターの組み合わせ確認
     public void CombinationUpdate() {
         for (int i = 0; i < Stage.GetLength(0); i++) {
             for (int j = 0; j < Stage.GetLength(1); j++) {
-                if (Stage[i, j].stayCharacter.data.m_DropType == DropType.ozisan) {
-                    List<GameObject> characters = new List<GameObject>() { Stage[i, j].stayCharacter.gameObject };
-                    CharacterManager2.Instance.Combination(characters, DropType.ozisan, i, j);
+                if (Stage[i,j].character && (Stage[i, j].character.data.m_DropType == DropType.ozisan || Stage[i,j].character.data.m_DropType == DropType.biru)) {
+                    List<GameObject> characters = new List<GameObject>() { Stage[i, j].character.gameObject };
+                    CharacterManager2.Instance.Combination(characters, Stage[i, j].character.data.m_DropType, i, j);
                 }
             }
         }
@@ -176,8 +185,8 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
         //    }
         //}
         foreach (StageChip chip in Stage) {
-            if (chip.stayCharacter) {
-                DeleteCharacter(chip.stayCharacter);
+            if (chip.holdCharacter) {
+                DeleteCharacter(chip.holdCharacter);
             }
         }
     }
@@ -246,7 +255,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
         {
             for (int j = 0; j < stage.GetLength(0); j++)
             {
-                if (stage[j, i].stayCharacter == null)
+                if (stage[j, i].holdCharacter == null)
                 {
                     DropDown(j, i, isBack);
                 }
@@ -268,16 +277,16 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
         if (!isBack)
         {
             if (y == 0) {
-                if (backGroundStage[x, backGroundStage.GetLength(1) - 1].stayCharacter)
+                if (backGroundStage[x, backGroundStage.GetLength(1) - 1].holdCharacter)
                 {
-                    backGroundStage[x, backGroundStage.GetLength(1) - 1].stayCharacter.transform.SetParent(CharacterParent.transform);
+                    backGroundStage[x, backGroundStage.GetLength(1) - 1].holdCharacter.transform.SetParent(CharacterParent.transform);
                     Stage[x, y].MoveCharacter(backGroundStage[x, backGroundStage.GetLength(1) - 1]);
                 }
                 else {
                     DropDown(x, backGroundStage.GetLength(1) - 1, true);
                 }
             }
-            else if (Stage[x, y - 1].stayCharacter)
+            else if (Stage[x, y - 1].holdCharacter)
             {
                 Stage[x, y].MoveCharacter(Stage[x, y - 1]);
                 return;
@@ -290,7 +299,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
         }
 
         if (isBack) {
-            if (backGroundStage[x, y - 1].stayCharacter) {
+            if (backGroundStage[x, y - 1].holdCharacter) {
                 if (y == backGroundStage.GetLength(1)) {
                     backGroundStage[x, y].MoveCharacter(Stage[x, 0]);
                 }
@@ -321,14 +330,14 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     public void RandDelete(int num)
     {
         for (int i = 0; i < num; i++)
-            DeleteCharacter(Stage[Random.Range(0, Stage.GetLength(0)), Random.Range(0, Stage.GetLength(1))].stayCharacter);
+            DeleteCharacter(Stage[Random.Range(0, Stage.GetLength(0)), Random.Range(0, Stage.GetLength(1))].holdCharacter);
     }
 
 	public StageChip GetStageChip(GameObject checkMapObj)
 	{
 		StageChip output = null;
 		foreach (StageChip _output in Stage) {
-			if (_output.stayCharacter.gameObject == checkMapObj) {
+			if (_output.holdCharacter.gameObject == checkMapObj) {
 				output = _output;
 				break;
 			}
@@ -351,11 +360,12 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 	{
 		StageChip _stageChip;
 		_stageChip = GetStageChip (checkMapObj);
-		Debug.Log (_stageChip.stayCharacter);
-		DeleteCharacter(_stageChip.stayCharacter);
+		Debug.Log (_stageChip.holdCharacter);
+		DeleteCharacter(_stageChip.holdCharacter);
 
         Character beef = Instantiate(beefjarkeyPrefab);//CharacterManager2.Instance.CreateCharacter ((int)DropType.jaki);
-		_stageChip.AddCharacter (beef, true);
+        _stageChip.AddCharacter(beef, true, 0.8f);
+        //Debug.Log(_stageChip.character + ":" + _stageChip.character.gameObject.activeInHierarchy);
 		beef.transform.SetParent (CharacterParent.transform);
 		//SetStageChip (_stageChip);
 	}
