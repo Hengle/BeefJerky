@@ -34,6 +34,8 @@ public class UIManager : MonoBehaviour {
 		GameObject soundObj = GameObject.Find("SoundManager"); //SoundManagerオブジェクトのキャッシュ
 		audioSource[0] = soundObj.transform.Find("BGMManager").GetComponent<AudioSource>(); //BGMのAudioSourceのキャッシュ
 		audioSource[1] = soundObj.transform.Find("SEManager").GetComponent<AudioSource>(); //SEのAudioSourceのキャッシュ
+
+		PlayCutIn();
 	}
 	 /// <summary>
 	 /// ゲーム残り時間のUIを更新する関数。
@@ -58,7 +60,7 @@ public class UIManager : MonoBehaviour {
 
 	public void PlayCutIn()
 	{
-
+		cutInAnimation.PlayAnimation();
 	}
 
 	/// <summary>
