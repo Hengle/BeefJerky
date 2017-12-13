@@ -57,7 +57,7 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
             for (int j = 0; j < StageManager.Instance.Stage.GetLength(1); j++)
             {
                 // ヒットしたオブジェクトと一致していれば実行
-                if (StageManager.Instance.Stage[i, j].stayCharacter.gameObject == target)
+                if (StageManager.Instance.Stage[i, j].holdCharacter.gameObject == target)
                 {
                     return new int[] { i, j };
                 }
@@ -82,7 +82,7 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
             {
                 // ヒットオブジェクトを格納
                 //saveList.Clear();
-                saveList.Add(StageManager.Instance.Stage[num[0], num[1]].stayCharacter.gameObject);
+                saveList.Add(StageManager.Instance.Stage[num[0], num[1]].holdCharacter.gameObject);
                 nowX = num[0];
                 nowY = num[1];
 
@@ -117,7 +117,7 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
 					return;
 
 				// ヒットしたオブジェクトと一致していれば実行
-				if (StageManager.Instance.Stage [num [0], num [1]].stayCharacter.gameObject != obj)
+				if (StageManager.Instance.Stage [num [0], num [1]].holdCharacter.gameObject != obj)
 					return;
 
 				GameObject hitObj = GetMousePosObj ();
@@ -132,7 +132,7 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
 
 					// 削除対象オブジェクトを選択していれば実行
 					if (CharacterManager2.Instance.getObjFlg (num [0], num [1]) && comboFlg) {
-							saveList.Add (StageManager.Instance.Stage [num [0], num [1]].stayCharacter.gameObject);
+							saveList.Add (StageManager.Instance.Stage [num [0], num [1]].holdCharacter.gameObject);
 							Debug.Log (obj);
 						}
                      // コンボ中に削除対象から外れてしまったら実行

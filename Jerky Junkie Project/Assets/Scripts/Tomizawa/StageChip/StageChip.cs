@@ -8,7 +8,16 @@ using UnityEngine;
 public class StageChip : MonoBehaviour {
     public int[] path;
     public Vector2 position { get { return transform.position; } }
-    public Character stayCharacter { get { return _character; } }
+    //このマスにいる（移動中でも）キャラクター
+    public Character holdCharacter { get { return _character; } }
+    //このマスに留まっている（移動中はnull）キャラクター
+    public Character character {
+        get {
+            if (_character && _character.move != null)
+                return null;
+            return _character;
+        }
+    }
     [SerializeField]
     private Character _character;
 
@@ -31,14 +40,15 @@ public class StageChip : MonoBehaviour {
     /// <summary>
     /// このマスにCharacterを追加する処理
     /// </summary>
-    public void AddCharacter(Character target, bool isInit = false) {
+    public void AddCharacter(Character target, bool isInit = false,float moveEndWait = 0) {
         _character = target;
         //_character.transform.SetParent(transform);
         _character.data.path = new int[] { path[0], path[1] };
+        /*
         if (isInit)
             _character.transform.position = position;
-        else
-            _character.MoveStart(position);
+        else*/
+        _character.MoveStart(position, isInit, moveEndWait);
     }
 
     /// <summary>

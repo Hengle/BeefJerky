@@ -142,8 +142,8 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
     /// <param name="y2"></param>
     internal void DirectionObjMove(int x1, int y1, int x2, int y2) {
         //Stageで入れ替える形に
-        Character c1 = StageManager.Instance.Stage[x1, y1].stayCharacter;
-        Character c2 = StageManager.Instance.Stage[x2, y2].stayCharacter;
+        Character c1 = StageManager.Instance.Stage[x1, y1].holdCharacter;
+        Character c2 = StageManager.Instance.Stage[x2, y2].holdCharacter;
 
         StageManager.Instance.Stage[x1, y1].RemoveCharacter();
         StageManager.Instance.Stage[x2, y2].RemoveCharacter();
@@ -177,15 +177,16 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
             _x = x + dirs[i, 0];
             if (_x < 0 || _x >= StageManager.Instance.StageLength[0]) continue;
             //_x = (_x < 0 ? 0 : (_x >= StageManager.Instance.StageLength[0] ? StageManager.Instance.StageLength[0] - 1 : _x));
-            _y = y + dirs[i, 
-                1];
+            _y = y + dirs[i, 1];
             if (_y < 0 || _y >= StageManager.Instance.StageLength[1]) continue;
             _y = (_y < 0 ? 0 : (_y >= StageManager.Instance.StageLength[1] ? StageManager.Instance.StageLength[1] - 1 : _y));
 
-            GameObject chara = objList.Find(z => z == StageManager.Instance.Stage[_x, _y].stayCharacter.gameObject);
+            if (StageManager.Instance.Stage[_x, _y].character == null) continue;
+            GameObject chara = objList.Find(z => z == StageManager.Instance.Stage[_x, _y].holdCharacter.gameObject);
             //探索先が同タイプでリストに含まれていない場合、探索先をリストに含めた後さらにそこから探索を開始する
-            if (chara == null && StageManager.Instance.Stage[_x, _y].stayCharacter.data.m_DropType == type) {
-                objList.Add(StageManager.Instance.Stage[_x, _y].stayCharacter.gameObject);
+            if (chara == null && StageManager.Instance.Stage[_x, _y].holdCharacter.data.m_DropType == type) {
+                StageManager.Instance.Stage[_x, _y].character.isChecked = true;
+                objList.Add(StageManager.Instance.Stage[_x, _y].holdCharacter.gameObject);
                 search(type,objList, _x, _y,isBomb,isCircle,--limit);
             }
             else if(isBomb){
@@ -202,12 +203,9 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
     public void Combination(List<GameObject> characters, DropType type, int x = 0,int y = 0) {
         switch (type) {
             case DropType.usi:
-                //４つ繋がっていたら一つのジャーキーになる
-                if (characters.Count >= 4) {
-                    RootDestoryInstance(characters);
-                }
                 break;
             case DropType.ozisan:
+                if (StageManager.Instance.Stage[x, y].character.isChecked) break;
                 //ジャーキーと隣あったら、そのジャーキーと繋がっている全てのジャーキーを消滅させる
                 search(DropType.jaki, characters, x, y);
                 Debug.Log(characters.Count);
@@ -226,8 +224,14 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
                 if (!isJaki) break;//ジャーキーが無ければ消さない
                 RootDestoryInstance(characters);
                 break;
-            case DropType.jaki:
             case DropType.biru:
+                if (StageManager.Instance.Stage[x, y].character.isChecked) break;
+                search(DropType.biru, characters, x, y);
+                if (characters.Count >= 4) {
+                    RootDestoryInstance(characters);
+                }
+                break;
+            case DropType.jaki:
             default:
                 break;
         }
@@ -241,7 +245,7 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
     internal void CombinationSearch(int x, int y)
     {
         List<CharacterData> list = new List<CharacterData>();
-        switch (StageManager.Instance.Stage[x, y].stayCharacter.data.m_DropType)
+        switch (StageManager.Instance.Stage[x, y].holdCharacter.data.m_DropType)
         {
             case 0://牛 仲間がいたらまとまってジャーキーになる
                 //search(CharaNum["Gyu"], ref list, x, y);
@@ -257,8 +261,8 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
 
     public bool getObjFlg(int x, int y)
     {
-        Debug.Log(StageManager.Instance.Stage[x, y].stayCharacter.data.m_DropType);
-        return StageManager.Instance.Stage[x, y].stayCharacter.data.m_DropType == DropType.usi;
+        Debug.Log(StageManager.Instance.Stage[x, y].holdCharacter.data.m_DropType);
+        return StageManager.Instance.Stage[x, y].holdCharacter.data.m_DropType == DropType.usi;
     }
 
     /*
