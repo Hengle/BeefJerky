@@ -24,7 +24,8 @@ public class DropInput : MonoBehaviour {
 	void Start () {
 		InputFlg = ChangeFlg = false;
 		SaveObj = new List<CharacterData> ();
-		CharaManager = GameObject.Find ("CharacterManager").GetComponent<CharacterManager> ();
+        CharaManager = GameObject.Find ("CharacterManager").GetComponent<CharacterManager> ();
+        //CharaManager = CharacterManager2.Instance;
 	}
 	
 	// Update is called once per frame

@@ -137,7 +137,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     /// Chaarcterを削除する処理
     /// </summary>
     /// <param name="target"></param>
-    private void DeleteCharacter(Character target) {
+    public void DeleteCharacter(Character target) {
         Destroy(target.gameObject);
         updateFlag = true;
     }
@@ -147,7 +147,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     /// </summary>
     /// <returns></returns>
     private Character InitCharacter() {
-        return Instantiate(characterPrefabs[0]);
+        return Instantiate(characterPrefabs[Random.Range(0, characterPrefabs.Count)]);
     }
 
     /// <summary>
