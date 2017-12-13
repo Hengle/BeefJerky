@@ -1,4 +1,9 @@
-﻿using UnityEngine;
+﻿// 作成者    :菅原 
+// 機能      :テキストの点滅処理
+// 作成日    :2017/12/12 
+// 最終更新日:2017/12/12 
+
+using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Collections;

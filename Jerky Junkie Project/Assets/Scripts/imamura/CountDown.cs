@@ -4,10 +4,12 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class CountDown : MonoBehaviour {
-    public bool enableFade = false;
-    public bool enableFadeIn = false;
-    public bool enableFadeOut = false;
-    public bool enableFadeOn = false;
+     bool enableFade = false;
+     bool enableFadeIn = false;
+     bool enableFadeOut = false;
+     bool enableFadeOn = false;
+
+    bool Mozi;
 
     public float speed = 1f;
 
@@ -24,7 +26,7 @@ public class CountDown : MonoBehaviour {
 		//CountDownStart();
 	}
 
-	public void CountDownStart ()                   //こいつを起動させれば起動
+	public void CountDownStart (bool SorE)                   //こいつを起動させれば起動      trueならスタート前。　falseなら終わり前
     {
         countDownTextNumber = 3;
         count = 1f;
@@ -33,12 +35,20 @@ public class CountDown : MonoBehaviour {
         setAlpha(countDownStart, count);
         countDownStart.enabled = true;
         titleScript.CountDownSE();
+        Mozi=SorE;
     }
     void Update()
     {
         if (countDownTextNumber == 0)
         {
-            countDownStart.text = "GO!";
+            if (Mozi)
+            {
+                countDownStart.text = "GO!";
+            }
+            else
+            {
+                countDownStart.text = "END!";
+            }
         }
         else
         {
