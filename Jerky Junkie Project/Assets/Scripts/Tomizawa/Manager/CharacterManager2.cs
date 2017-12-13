@@ -210,12 +210,14 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
             case DropType.ozisan:
                 //ジャーキーと隣あったら、そのジャーキーと繋がっている全てのジャーキーを消滅させる
                 search(DropType.jaki, characters, x, y);
+                Debug.Log(characters.Count);
                 //同時に、消したキャラクターの周囲１マス内（斜め含む）にあるビールを消滅させる
                 search(DropType.jaki, characters, x, y, true);
                 List<GameObject> charas = new List<GameObject>(characters);
                 bool isJaki = false;//ジャーキーが一つでも存在するか確認
                 foreach (GameObject c in charas) {
                     Character character = c.GetComponent<Character>();
+                    Debug.Log(character.data.m_DropType);
                     if (character.data.m_DropType == DropType.jaki) {
                         search(DropType.biru, characters, character.data.path[0], character.data.path[1], false, true, 1);
                         isJaki = true;

@@ -331,7 +331,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 		Debug.Log (_stageChip.stayCharacter);
 		DeleteCharacter(_stageChip.stayCharacter);
 
-		Character beef = CharacterManager2.Instance.CreateCharacter ((int)DropType.jaki);
+        Character beef = Instantiate(beefjarkeyPrefab);//CharacterManager2.Instance.CreateCharacter ((int)DropType.jaki);
 		_stageChip.AddCharacter (beef, true);
 		beef.transform.SetParent (CharacterParent.transform);
 		//SetStageChip (_stageChip);
