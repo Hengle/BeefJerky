@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HiScore : MonoBehaviour {
+public class HiScore : SingletonMonoBehaviour<HiScore> {
         
     public Text scoreText;// スコアを表示する
     
