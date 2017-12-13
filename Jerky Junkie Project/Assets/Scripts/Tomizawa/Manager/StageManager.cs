@@ -14,12 +14,9 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     private int x, y;//Stageの大きさ
     [SerializeField]//ステージ枠の大きさ ステージの中心位置
     private Vector2 StageSize,DefaultPosition;
-
-
+    
     [SerializeField]
     private Sprite[] data;//使用するマス画像
-    //[SerializeField]
-    //private Vector2 spriteSize;//画像の基本サイズ
     [SerializeField]
     private StageChip StageChipPrefab;
     [SerializeField]
@@ -31,6 +28,27 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 
     private bool updateFlag;
     public bool stopFlag;
+
+    //演出などの待機するべき処理がいくつ実行中か　０になった時、おじさんとジャーキーの組み合わせなどを確認する
+    [SerializeField]
+    private int _count;
+    public void MoveStart() {
+        _count++;
+        isWaiting = true;
+    }
+    public void MoveEnd() { _count--; }
+    [SerializeField]
+    private bool isWaiting;
+    public bool isMoveWaitEnd {
+        get {
+            if (isWaiting && _count == 0) {
+                isWaiting = false;
+                return true;
+            }
+            return false;
+        }
+    }
+
 
     // Use this for initialization
     void Start () {
@@ -57,6 +75,11 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
                 if (chip.stayCharacter == null)
                     chip.AddCharacter(InitCharacter(true));
             }
+        }
+
+        if (isMoveWaitEnd) {
+            CombinationUpdate();
+            Debug.Log("waitEnd");
         }
 
         if (Input.GetKeyDown(KeyCode.Space)) {
