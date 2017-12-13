@@ -208,20 +208,29 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
                 if (StageManager.Instance.Stage[x, y].character.isChecked) break;
                 //ジャーキーと隣あったら、そのジャーキーと繋がっている全てのジャーキーを消滅させる
                 search(DropType.jaki, characters, x, y);
-                Debug.Log(characters.Count);
                 //同時に、消したキャラクターの周囲１マス内（斜め含む）にあるビールを消滅させる
                 search(DropType.jaki, characters, x, y, true);
                 List<GameObject> charas = new List<GameObject>(characters);
-                bool isJaki = false;//ジャーキーが一つでも存在するか確認
+                //ジャーキーやビールの数
+                int jakiCount = 0;
                 foreach (GameObject c in charas) {
                     Character character = c.GetComponent<Character>();
-                    Debug.Log(character.data.m_DropType);
-                    if (character.data.m_DropType == DropType.jaki) {
+                    if (character.data.m_DropType == DropType.jaki)
+                    {
                         search(DropType.biru, characters, character.data.path[0], character.data.path[1], false, true, 1);
-                        isJaki = true;
+                        jakiCount++;
                     }
                 }
-                if (!isJaki) break;//ジャーキーが無ければ消さない
+                if (jakiCount == 0) break;//ジャーキーが無ければ消さない
+                //int biruCount = 0;
+                //foreach (GameObject c in characters) {
+                //    if (c.GetComponent<Character>().data.m_DropType == DropType.biru) biruCount++;
+                //}
+
+                int score = (5000 + (jakiCount > 4 ? 3000 + (jakiCount - 4) * 500 : (jakiCount - 1) * 1000));//* (1 + biruCount / 10);
+                //Debug.Log(score);
+                HiScore.Instance.AddPoint(score);
+
                 RootDestoryInstance(characters);
                 break;
             case DropType.biru:
