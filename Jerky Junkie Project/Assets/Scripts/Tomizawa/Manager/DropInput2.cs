@@ -87,6 +87,10 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
                 nowY = num[1];
 
                 InputFlg = true;
+
+				if (CharacterManager2.Instance.getObjFlg (num [0], num [1])) {
+					comboFlg = true;
+				}
             }
         }
         else
@@ -127,21 +131,25 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
 				} else {
 
 					// 削除対象オブジェクトを選択していれば実行
-					if (CharacterManager2.Instance.getObjFlg (num [0], num [1])) {
-						saveList.Add (StageManager.Instance.Stage [num [0], num [1]].stayCharacter.gameObject);
-						Debug.Log (obj);
-						comboFlg = true;
-					}
+					if (CharacterManager2.Instance.getObjFlg (num [0], num [1]) && comboFlg) {
+							saveList.Add (StageManager.Instance.Stage [num [0], num [1]].stayCharacter.gameObject);
+							Debug.Log (obj);
+						}
                      // コンボ中に削除対象から外れてしまったら実行
                     else if (!CharacterManager2.Instance.getObjFlg (num [0], num [1]) && comboFlg) {
-						ComboDestroyCheck ();
+						if (saveList.Count > 1) {
+							ComboDestroyCheck ();
 
-						saveList.Clear ();
+							saveList.Clear ();
 
-						stopper = true;
+							stopper = true;
+						} else {
+							CharacterManager2.Instance.DirectionObjMove (nowX, nowY, num [0], num [1]);
+
+						}
 					 }
                       // 削除対象以外を選択時実行
-                      else if (!CharacterManager2.Instance.getObjFlg (num [0], num [1]) && !comboFlg) {
+                      else{
 
 						CharacterManager2.Instance.DirectionObjMove (nowX, nowY, num [0], num [1]);
 
