@@ -9,7 +9,22 @@ public class HiScore : MonoBehaviour {
 
     public Text ResultHighScoreText;//リザルトのハイスコア表示
 
+	public UIManager uIManager;
+
     private int score;// スコア
+
+	public int Score
+	{
+		get
+		{
+			return score;
+		}
+		set
+		{
+			score = value;
+			uIManager.ScoreUpdate(score);
+		}
+	}
 
     private int highScore = 0;// ハイスコア
 
@@ -53,7 +68,7 @@ public class HiScore : MonoBehaviour {
 
     public void AddPoint(int point) //引数で得たポイントを追加
     {
-        score = score + point;
+        Score = score + point;
     }
 
     public void Save() // ハイスコアの保存 リザルトを抜ける時に呼び出す
