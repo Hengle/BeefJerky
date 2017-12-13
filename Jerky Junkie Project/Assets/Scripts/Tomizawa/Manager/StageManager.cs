@@ -62,9 +62,9 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
         CharacterInit(Stage);
         CharacterInit(backGroundStage,true);
         //CharacterManager2.Instance.CharactersDateInitialize(characterPrefabs);
-        foreach (Character c in characterPrefabs) {
-            Debug.Log(c.data.m_DropType);
-        }
+        //foreach (Character c in characterPrefabs) {
+        //    Debug.Log(c.data.m_DropType);
+        //}
 	}
 
     private void Update()

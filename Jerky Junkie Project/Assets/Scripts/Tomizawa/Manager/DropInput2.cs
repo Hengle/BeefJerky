@@ -142,7 +142,7 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
 					// 削除対象オブジェクトを選択していれば実行
 					if (CharacterManager2.Instance.getObjFlg (num [0], num [1]) && comboFlg) {
                         AddSaveList(StageManager.Instance.Stage[num[0], num[1]].holdCharacter.gameObject);//saveList.Add (StageManager.Instance.Stage [num [0], num [1]].holdCharacter.gameObject);
-							Debug.Log (obj);
+							//Debug.Log (obj);
 						}
                      // コンボ中に削除対象から外れてしまったら実行
                     else if (!CharacterManager2.Instance.getObjFlg (num [0], num [1]) && comboFlg) {

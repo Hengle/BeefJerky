@@ -27,7 +27,7 @@ public class Character : MonoBehaviour {
 
             if (move != null) StopCoroutine(move);
             move = StartCoroutine(MoveTo(pos, moveEndWait)); //StartCoroutine(MoveTo(_character.gameObject, position));
-            Debug.Log(gameObject + ":" + (move == null));
+            //Debug.Log(gameObject + ":" + (move == null));
         }
         else transform.position = pos;
     }
