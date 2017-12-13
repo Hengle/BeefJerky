@@ -39,10 +39,8 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
             //CharacterManager2.Instance.RootDestoryInstance(saveList);
             nowX = nowY = 0;
 
-            if (saveList.Count >= 4)
-            {
-                CharacterManager2.Instance.RootDestoryInstance(saveList);
-            }
+			ComboDestroyCheck ();
+
             saveList.Clear();
         }
     }
@@ -93,86 +91,87 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
         }
         else
         {
-            if (saveList.Count != 0 && !ChangeFlg)
-            {
+			if (saveList.Count != 0 && !ChangeFlg) {
 
-                // 他のマスに移動していれば(最初の入力で受け取ったオブジェクトと違うオブジェクトを選択していたら)実行 //ドロップの入れ替え処理
-                if (saveList[0] != obj)
-                {
+				// 他のマスに移動していれば(最初の入力で受け取ったオブジェクトと違うオブジェクトを選択していたら)実行 //ドロップの入れ替え処理
+				if (saveList [0] == obj)
+					return;
 
-                    if (saveList.Count == 0 || ChangeFlg) return;
-                    int[] num = GetCharacterNumber(obj);
+				if (saveList.Count == 0 || ChangeFlg)
+					return;
+				
+				int[] num = GetCharacterNumber (obj);
 
-                    // 他のマスに移動していれば実行
-                    GameObject findSaveObj = saveList.Find(x => x == obj);
-                    if (findSaveObj != null)
-                    {
-                        CheckSaveObj(findSaveObj);
-                        return;
-                    }
+				// 他のマスに移動していれば実行
+				GameObject findSaveObj = saveList.Find (x => x == obj);
+				if (findSaveObj != null) {
+					CheckSaveObj (findSaveObj);
+					return;
+				}
 
-                    if (num != null)
-                    {
+				if (num == null)
+					return;
 
-                        // ヒットしたオブジェクトと一致していれば実行
-                        if (StageManager.Instance.Stage[num[0], num[1]].stayCharacter.gameObject == obj)
-                        {
+				// ヒットしたオブジェクトと一致していれば実行
+				if (StageManager.Instance.Stage [num [0], num [1]].stayCharacter.gameObject != obj)
+					return;
 
-                            GameObject hitObj = GetMousePosObj();
-                            ///////
-                            // コンボ中に削除対象から外れてしまったときの処理
-                            if (stopper)
-                            {
-                                //最後に選択されたキャラクターを再び選択したら、処理を再開する
-                                if (hitObj == saveList[saveList.Count - 1])
-                                {
-                                    stopper = false;
-                                }
-                            }
-                            else
-                            {
+				GameObject hitObj = GetMousePosObj ();
+				///////
+				// コンボ中に削除対象から外れてしまったときの処理
+				if (stopper) {
+					//最後に選択されたキャラクターを再び選択したら、処理を再開する
+					if (hitObj == saveList [saveList.Count - 1]) {
+						stopper = false;
+					}
+				} else {
 
-                                // 削除対象オブジェクトを選択していれば実行
-                                if (CharacterManager2.Instance.getObjFlg(num[0], num[1]))
-                                {
-                                    saveList.Add(StageManager.Instance.Stage[num[0], num[1]].stayCharacter.gameObject);
-                                    Debug.Log(obj);
-                                    comboFlg = true;
-                                }
-                                // コンボ中に削除対象から外れてしまったら実行
-                                else if (!CharacterManager2.Instance.getObjFlg(num[0], num[1]) && comboFlg)
-                                {
-                                    if (saveList.Count >= 4)
-                                    {
-                                        CharacterManager2.Instance.RootDestoryInstance(saveList);
-                                    }
+					// 削除対象オブジェクトを選択していれば実行
+					if (CharacterManager2.Instance.getObjFlg (num [0], num [1])) {
+						saveList.Add (StageManager.Instance.Stage [num [0], num [1]].stayCharacter.gameObject);
+						Debug.Log (obj);
+						comboFlg = true;
+					}
+                     // コンボ中に削除対象から外れてしまったら実行
+                    else if (!CharacterManager2.Instance.getObjFlg (num [0], num [1]) && comboFlg) {
+						ComboDestroyCheck ();
 
-                                    saveList.Clear();
+						saveList.Clear ();
 
-                                    stopper = true;
-                                }
-                                // 削除対象以外を選択時実行
-                                else if (!CharacterManager2.Instance.getObjFlg(num[0], num[1]) && !comboFlg)
-                                {
+						stopper = true;
+					 }
+                      // 削除対象以外を選択時実行
+                      else if (!CharacterManager2.Instance.getObjFlg (num [0], num [1]) && !comboFlg) {
 
-                                    CharacterManager2.Instance.DirectionObjMove(nowX, nowY, num[0], num[1]);
+						CharacterManager2.Instance.DirectionObjMove (nowX, nowY, num [0], num [1]);
 
-                                    //Debug_CharacterDataLog ();
-                                    //CharaManager.CombinationSearch (i, j);
-                                    //CharaManager.CombinationSearch (nowX, nowY);
+						//Debug_CharacterDataLog ();
+						//CharaManager.CombinationSearch (i, j);
+						//CharaManager.CombinationSearch (nowX, nowY);
 
-                                    //CharaManager.search (SaveObj [0].m_SpriteNum, ref SaveObj, i, j);
-                                    //CharaManager.search (CharaManager.CharacterInstance [numX, numY].m_SpriteNum, ref SaveObj, numX, numY);
+						//CharaManager.search (SaveObj [0].m_SpriteNum, ref SaveObj, i, j);
+						//CharaManager.search (CharaManager.CharacterInstance [numX, numY].m_SpriteNum, ref SaveObj, numX, numY);
 
-                                    ChangeFlg = true;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+						ChangeFlg = true;
+					}
+				}
+			}
         }
     }
+
+	void ComboDestroyCheck()
+	{
+		if (saveList.Count >= 4)
+		{
+			GameObject beefjarkey = saveList [saveList.Count - 1];
+			saveList.RemoveAt (saveList.Count - 1);
+
+			Debug.Log (beefjarkey);
+			CharacterManager2.Instance.RootDestoryInstance(saveList);
+
+			StageManager.Instance.CreateBeefjarkey (beefjarkey);
+		}
+	}
 
     void CheckSaveObj(GameObject target)
     {
