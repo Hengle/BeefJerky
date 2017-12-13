@@ -10,115 +10,93 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour {
 
-	[SerializeField] private Slider timeSlider = null;
-	[SerializeField] private GameObject pauseWindow = null;
-	[SerializeField] private bool pause = false;
-	[SerializeField] private Image pauseButtonImage = null;
-	[SerializeField] private Sprite[] pauseButtonSprite = null;
+	[SerializeField] private Slider timeSlider = null; //残り時間ゲージ
 
-	[SerializeField] private AudioSource[] audioSource = null;
-	private bool[] audioMute = { false,false}; //trueのときミュート
-	public float[] saveValue = { 0.0f, 0.0f };
-	[SerializeField] private Image[] musicButtonImage = null;
-	[SerializeField] private Sprite[] musicButtonSprite = null;
+	[SerializeField] private bool pause = false; //ポーズ中かどうか
+	[SerializeField] private Image pauseButtonImage = null; //ポーズボタンの現在の画像
+	[SerializeField] private Sprite[] pauseButtonSprite = null; //ポーズボタンの画像素材。0が停止、1が再生画像
 
+	[SerializeField] private AudioSource[] audioSource = null; //BGM、SEそれぞれのAudioSource。オプションで音量を変更する際に使用
 	[SerializeField] private Slider[] audioSlider = null;
 
-	[SerializeField] private FadeManager fadeManager = null;
+	[SerializeField] private FadeManager fadeManager = null; //フェードを行うスクリプト
+	[SerializeField] private WindowMove windowMove = null; //ポーズウインドウのアニメーションを行うスクリプト
+	[SerializeField] private AnimationScore animationScore = null; //スコアテキストのアニメーションを行うスクリプト
+	[SerializeField] private CutInAnimation cutInAnimation = null;
 
-	[SerializeField] private WindowMove windowMove = null;
-	[SerializeField] private AnimationScore animationScore = null;
-	public int saveScore = 0;
+	public int saveScore = 0; //直前のスコアを保存する
 
-	private float maxT = 100f;
-	private float t;
-
-	private int score = 0;
+	private float maxT = 60.0f; //制限時間
 
 	private void Awake()
 	{
-		fadeManager = transform.Find("SceneFade").GetComponent<FadeManager>();
+		fadeManager = transform.Find("SceneFade").GetComponent<FadeManager>(); //FadeManagerスクリプトをキャッシュ
+		GameObject soundObj = GameObject.Find("SoundManager"); //SoundManagerオブジェクトのキャッシュ
+		audioSource[0] = soundObj.transform.Find("BGMManager").GetComponent<AudioSource>(); //BGMのAudioSourceのキャッシュ
+		audioSource[1] = soundObj.transform.Find("SEManager").GetComponent<AudioSource>(); //SEのAudioSourceのキャッシュ
 	}
-
-	private void Start()
-	{
-		t = maxT;
-		//pauseWindow.SetActive(false);
-		GameObject soundObj = GameObject.Find("SoundManager");
-		audioSource[0] = soundObj.transform.Find("BGMManager").GetComponent<AudioSource>();
-		audioSource[1] = soundObj.transform.Find("SEManager").GetComponent<AudioSource>();
-	}
-
-	void Update () {
-		t -= Time.deltaTime * 5.0f;
-		TimeUpdate(t);
-	}
-
+	 /// <summary>
+	 /// ゲーム残り時間のUIを更新する関数。
+	 /// 現在の残り時間をtimeに渡してください。
+	 /// </summary>
+	 /// <param name="time"></param>
 	public void TimeUpdate(float time)
 	{
-		timeSlider.value = t/maxT;
+		timeSlider.value = time/maxT; //（現在時間/最大の時間）をTimeゲージの値に入れる
 	}
 
+	/// <summary>
+	/// スコアのUIテキストを更新する関数。
+	/// 現在のスコアをscoreに渡してください。
+	/// </summary>
+	/// <param name="score"></param>
 	public void ScoreUpdate(int score)
 	{
-		animationScore.AnimationPlay(saveScore,score);
-		saveScore = score;
+		animationScore.AnimationPlay(saveScore,score); //直前のスコア、現在のスコアを渡す
+		saveScore = score; //現在のスコアを保存
 	}
 
+	public void PlayCutIn()
+	{
+
+	}
+
+	/// <summary>
+	/// ポーズを行う関数。
+	/// ポーズボタンが押されたときのみ呼ばれます。
+	/// </summary>
 	public void Pause()
 	{
-		pause = !pause;
-	//	pauseWindow.SetActive(pause);
-		windowMove.MoveOn(pause);
-		if (pause)
+		pause = !pause; //ポーズ状態を反転
+		windowMove.MoveOn(pause); //現在のポーズ状態を渡すと、それに対応したアニメーションをWindowMoveスクリプトで実行
+		if (pause) //ポーズ状態になった時
 		{
-			pauseButtonImage.sprite = pauseButtonSprite[1];
-			Time.timeScale = 0.0f;
+			pauseButtonImage.sprite = pauseButtonSprite[1]; //ポーズボタンを停止に変える
+			Time.timeScale = 0.0f; //時間を止める
 		}
 		else
 		{
-			pauseButtonImage.sprite = pauseButtonSprite[0];
-			Time.timeScale = 1.0f;
+			pauseButtonImage.sprite = pauseButtonSprite[0]; //ポーズボタンを再生に変える
+			Time.timeScale = 1.0f; //時間を動かす
 		}
 	}
-
-	public void MusicButton(int audioNum)
+	/// <summary>
+	/// UIで変更した音量をAudioSourceに適用させる関数。
+	/// </summary>
+	/// <param name="audioNum"></param>
+	public void OnValueChange(int audioNum) 
 	{
-		audioMute[audioNum] = !audioMute[audioNum];
-
-		if (audioMute[audioNum])
-		{
-			saveValue[audioNum] = audioSource[audioNum].volume;
-			musicButtonImage[audioNum].sprite = musicButtonSprite[1];
-			audioSource[audioNum].volume = 0.0f;
-		}
-		else 
-		{
-			musicButtonImage[audioNum].sprite = musicButtonSprite[0];
-			audioSource[audioNum].volume = saveValue[audioNum];
-		}
+		audioSource[audioNum].volume = audioSlider[audioNum].value; //AudioSourceの値にスライダーの値を代入
 	}
 
-	public void OnValueChange(int audioNum)
-	{
-		if (audioMute[audioNum])
-		{
-			saveValue[audioNum] = audioSlider[audioNum].value;
-		}
-		else
-		{
-			audioSource[audioNum].volume = audioSlider[audioNum].value;
-		}
-		if(audioNum == 1)
-		{
-			SoundManager.Instance.PlaySE("Bottan");
-		}
-	}
-
+	/// <summary>
+	/// 「終わる」ボタンを押したときのみ呼ばれる関数。
+	/// 時間を動かし、タイトルシーンへ戻ります。
+	/// </summary>
 	public void ExitButton()
 	{
-		Time.timeScale = 1.0f;
-		fadeManager.LoadLevel("Title");
+		Time.timeScale = 1.0f; //時間を動かす
+		fadeManager.LoadLevel("Title"); //タイトルシーンへ遷移
 	}
 
 }
