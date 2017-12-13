@@ -8,6 +8,7 @@ using UnityEngine.UI;
 /// </summary>
 public class StageManager : SingletonMonoBehaviour<StageManager> {
     public StageChip[,] Stage;//ステージ配列
+    public int[] StageLength { get { return new int[] { x, y }; } }
     private StageChip[,] backGroundStage;//ステージの上に配置する落ちてくる用のChip置き場
     [SerializeField]
     private int x, y;//Stageの大きさ

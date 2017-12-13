@@ -26,6 +26,7 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
         DontDestroyOnLoad(gameObject);
         Init();
 
+        
         for (int i = 0; i < charactersData.Length; i++) {
             CharaNum[charactersData[i].m_SpriteName] = i;
             charactersData[i].m_SpriteNum = CharaNum[charactersData[i].m_SpriteName];
@@ -114,6 +115,23 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
         return charactersData[0];
     }
 
+    internal void RootDestoryInstance(List<GameObject> objList)
+    {
+        foreach (GameObject obj in objList) {
+            //一つずつ削除してもらう
+            StageManager.Instance.DeleteCharacter(obj.GetComponent<Character>());
+        }
+        /*
+        for (int i = 0; i < objList.Count; i++)
+        {
+            CharacterData newList = objList[i];
+            Destroy(newList.m_CharacterSprite);
+            newList.m_SpriteName = "NULL";
+            newList.m_SpriteNum = CharaData.Length + 1;
+            objList[i] = newList;
+        }*/
+    }
+
     /// <summary>
     /// 指定したCharacterを削除する処理
     /// </summary>
@@ -145,8 +163,79 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
     /// <summary>
     /// 
     /// </summary>
-    internal void search() {
+    internal void search(int num, ref List<Character> objList, int x, int y)
+    {
+        /*
+        int direction = -1;
+        int _x, _y;
 
+        int[,] dirs = new int[,] { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
+        for(int i = 0;i < dirs.GetLength(0);i++) {
+            _x = x + dirs[i, 0];
+            _x = (_x < 0 ? 0 : (_x >= StageManager.Instance.StageLength[0] ? StageManager.Instance.StageLength[0] - 1 : _x));
+            _y = y + dirs[i, 1];
+            _y = (_y < 0 ? 0 : (_y >= StageManager.Instance.StageLength[1] ? StageManager.Instance.StageLength[1] - 1 : _y));
+
+
+            GameObject up = objList.Find(z => z.gameObject == StageManager.Instance.Stage[_x, _y].stayCharacter.gameObject);
+            if (up.m_CharacterSprite == null && CharacterInstance[_x, _y].m_SpriteNum == num) {
+                DestroyCount++;
+                objList.Add(CharacterInstance[_x, _y]);
+                search(num, ref objList, _x, _y);
+            }
+        }
+
+        // 上探索
+        _x = x != 0 ? x + direction : 0;
+        if (CharacterInstance[_x, y].m_SpriteNum != CharaData.Length + 1)
+        {
+            CharacterData up = objList.Find(z => z.m_CharacterSprite.GetInstanceID() == CharacterInstance[_x, y].m_CharacterSprite.GetInstanceID());
+            if (up.m_CharacterSprite == null && CharacterInstance[_x, y].m_SpriteNum == num)
+            {
+                DestroyCount++;
+                objList.Add(CharacterInstance[_x, y]);
+                search(num, ref objList, _x, y);
+            }
+        }
+        // 左探索
+        _y = y != 0 ? y + direction : 0;
+        if (CharacterInstance[x, _y].m_SpriteNum != CharaData.Length + 1)
+        {
+            CharacterData left = objList.Find(z => z.m_CharacterSprite.GetInstanceID() == CharacterInstance[x, _y].m_CharacterSprite.GetInstanceID());
+            if (left.m_CharacterSprite == null && CharacterInstance[x, _y].m_SpriteNum == num)
+            {
+                DestroyCount++;
+                objList.Add(CharacterInstance[x, _y]);
+                search(num, ref objList, x, _y);
+            }
+        }
+
+        direction *= -1;
+        // 下探索
+        _x = x != CharacterInstance.GetLength(0) - 1 ? x + direction : CharacterInstance.GetLength(0) - 1;
+        if (CharacterInstance[_x, y].m_SpriteNum != CharaData.Length + 1)
+        {
+            CharacterData down = objList.Find(z => z.m_CharacterSprite.GetInstanceID() == CharacterInstance[_x, y].m_CharacterSprite.GetInstanceID());
+            if (down.m_CharacterSprite == null && CharacterInstance[_x, y].m_SpriteNum == num)
+            {
+                DestroyCount++;
+                objList.Add(CharacterInstance[_x, y]);
+                search(num, ref objList, _x, y);
+            }
+        }
+        // 右探索
+        _y = y != CharacterInstance.GetLength(1) - 1 ? y + direction : CharacterInstance.GetLength(1) - 1;
+        if (CharacterInstance[x, _y].m_SpriteNum != CharaData.Length + 1)
+        {
+            CharacterData right = objList.Find(z => z.m_CharacterSprite.GetInstanceID() == CharacterInstance[x, _y].m_CharacterSprite.GetInstanceID());
+            if (right.m_CharacterSprite == null && CharacterInstance[x, _y].m_SpriteNum == num)
+            {
+                DestroyCount++;
+                objList.Add(CharacterInstance[x, _y]);
+                search(num, ref objList, x, _y);
+            }
+        }
+        */
     }
 
     /**
@@ -154,23 +243,23 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
 	 * @param[in] x			x軸配列座標
 	 * @param[in] y			y軸配列座標
 	 */
-     /*
     internal void CombinationSearch(int x, int y)
     {
         List<CharacterData> list = new List<CharacterData>();
         switch (StageManager.Instance.Stage[x, y].stayCharacter.data.m_SpriteNum)
         {
             case 0://牛 仲間がいたらまとまってジャーキーになる
-                search(CharaNum[DestroyName], ref list, x, y);
+                //search(CharaNum["Gyu"], ref list, x, y);
+                //search();
                 if (list.Count >= 4)
-                    RootDestoryInstance(list);//とりあえず削除
+                    RootDestoryInstance(/*list*/new List<GameObject>());//とりあえず削除
                 break;
             default:
 
                 break;
         }
     }
-
+    /*
     private void RootDestroy
         */
 }

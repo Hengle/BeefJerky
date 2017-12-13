@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
@@ -11,6 +12,7 @@ public class Character : MonoBehaviour {
     public bool isMove { get { return move == null; } }
 
     public CharacterData2 data;
+    
 
     public void Init(CharacterData2 data) {
         this.data = data;
@@ -38,5 +40,9 @@ public class Character : MonoBehaviour {
             target.transform.position = Vector2.Lerp(target.transform.position, pos, 0.1f);
             yield return null;
         }
+    }
+
+    public void HitImage() {
+        DropInput2.Instance.ObjectPointerEnter(this);
     }
 }
