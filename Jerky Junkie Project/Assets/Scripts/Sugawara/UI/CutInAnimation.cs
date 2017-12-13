@@ -28,9 +28,12 @@ public class CutInAnimation : MonoBehaviour
 
 	public void PlayAnimation()
 	{
-		cutInTransform.DOMoveX(0, inSpeed).OnComplete(() =>
-		 {
-			 cutInTransform.DOMoveX(endPosX, outSpeed).SetDelay(1.0f);
-		 });
+		var sequence = DOTween.Sequence();
+		sequence.Append(
+			cutInTransform.DOLocalMoveX(0,inSpeed)
+		);
+		sequence.Append(
+			cutInTransform.DOLocalMoveX(endPosX,outSpeed)
+		);
 	}
 }

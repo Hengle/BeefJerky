@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
 guid: 29207ab1cb8482f46a5cb3f32309903e
 timeCreated: 1513097931
+=======
+guid: ff67156b5970a1c40a175e46243a5a7e
+timeCreated: 1513127045
+>>>>>>> origin/akinobu
 licenseType: Free
 DefaultImporter:
   userData: 

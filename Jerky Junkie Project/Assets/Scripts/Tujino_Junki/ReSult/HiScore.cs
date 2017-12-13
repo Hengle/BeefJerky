@@ -4,10 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class HiScore : MonoBehaviour {
-        
-    public Text scoreText;// スコアを表示する
-    
-    public Text highScoreText;// ハイスコアを表示する
 
     public Text ResultScoreText;//リザルトのスコア表示
 
@@ -51,8 +47,8 @@ public class HiScore : MonoBehaviour {
 
     private void TextDraw()
     {
-        scoreText.text = score.ToString();// スコア・ハイスコアを表示する
-        highScoreText.text = highScore.ToString();
+    //    scoreText.text = score.ToString();// スコア・ハイスコアを表示する
+    //    highScoreText.text = highScore.ToString();
     }
 
     public void AddPoint(int point) //引数で得たポイントを追加

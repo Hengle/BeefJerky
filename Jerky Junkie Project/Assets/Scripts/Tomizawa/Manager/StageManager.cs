@@ -25,7 +25,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     [SerializeField]
     private Vector2 chipSze;//,offset;//余白は無し
     [SerializeField]
-    private List<Character> characterPrefabs;
+    public List<Character> characterPrefabs;
 
     private bool updateFlag;
     public bool stopFlag;
@@ -36,6 +36,10 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
         backGroundStage = InitStage(true);
         CharacterInit(Stage);
         CharacterInit(backGroundStage,true);
+        //CharacterManager2.Instance.CharactersDateInitialize(characterPrefabs);
+        foreach (Character c in characterPrefabs) {
+            Debug.Log(c.data.m_SpriteNum);
+        }
 	}
 
     private void Update()

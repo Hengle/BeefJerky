@@ -20,7 +20,8 @@ public class TitleManager : MonoBehaviour
 	{
 		if (Input.GetMouseButton(0))
 		{
-			fadeManager.LoadLevel("Main2");
+			fadeManager.LoadLevel("Main");
+			//fadeManager.LoadLevel("Main2");
 		}
 	}
 }

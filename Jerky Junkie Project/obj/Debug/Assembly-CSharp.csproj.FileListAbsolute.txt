@@ -29,3 +29,11 @@ C:\Users\ak_kn\Documents\BeefJerky\Jerky Junkie Project\Temp\bin\Debug\UnityEngi
 C:\Users\ak_kn\Documents\BeefJerky\Jerky Junkie Project\Temp\bin\Debug\UnityEngine.VR.xml
 C:\Users\ak_kn\Documents\BeefJerky\Jerky Junkie Project\obj\Debug\Assembly-CSharp.dll
 C:\Users\ak_kn\Documents\BeefJerky\Jerky Junkie Project\obj\Debug\Assembly-CSharp.pdb
+C:\Users\ak_kn\Documents\BeefJerky\Jerky Junkie Project\Temp\bin\Debug\DOTween.dll
+C:\Users\ak_kn\Documents\BeefJerky\Jerky Junkie Project\Temp\bin\Debug\DOTween43.dll
+C:\Users\ak_kn\Documents\BeefJerky\Jerky Junkie Project\Temp\bin\Debug\DOTween46.dll
+C:\Users\ak_kn\Documents\BeefJerky\Jerky Junkie Project\Temp\bin\Debug\DOTween50.dll
+C:\Users\ak_kn\Documents\BeefJerky\Jerky Junkie Project\Temp\bin\Debug\DOTween46.xml
+C:\Users\ak_kn\Documents\BeefJerky\Jerky Junkie Project\Temp\bin\Debug\DOTween50.xml
+C:\Users\ak_kn\Documents\BeefJerky\Jerky Junkie Project\Temp\bin\Debug\DOTween.xml
+C:\Users\ak_kn\Documents\BeefJerky\Jerky Junkie Project\Temp\bin\Debug\DOTween43.xml

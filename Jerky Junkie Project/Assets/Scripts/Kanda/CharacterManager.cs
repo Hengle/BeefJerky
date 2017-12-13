@@ -30,7 +30,7 @@ public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
 	float Width;				//!< ドロップの横の大きさ
 	float Height;				//!< ドロップの縦の大きさ
 
-	[SerializeField]　string DestroyName;
+	public string DestroyName;
 
 	[SerializeField]　
 	Transform InitPos;			//!< 二次元配列のスタート地点
@@ -94,6 +94,11 @@ public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
 				Debug.Log (CharacterInstance [i, j].m_SpriteNum);
 			}
 		}
+	}
+
+	public bool getObjFlg(int x,int y)
+	{
+		return CharacterInstance [x, y].m_SpriteNum == CharaNum [DestroyName];
 	}
 
 	/**
