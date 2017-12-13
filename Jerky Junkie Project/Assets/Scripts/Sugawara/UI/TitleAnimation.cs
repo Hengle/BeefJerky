@@ -1,4 +1,9 @@
-﻿using System.Collections;
+﻿// 作成者    :菅原 
+// 機能      :タイトルロゴのアニメーション処理
+// 作成日    :2017/12/12 
+// 最終更新日:2017/12/13
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;

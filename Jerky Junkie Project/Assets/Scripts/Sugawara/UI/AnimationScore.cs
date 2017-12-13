@@ -1,4 +1,9 @@
-﻿using UnityEngine;
+﻿// 作成者    :菅原 
+// 機能      :スコアのテキストUIの演出 
+// 作成日    :2017/12/12 
+// 最終更新日:2017/12/13 
+
+using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 

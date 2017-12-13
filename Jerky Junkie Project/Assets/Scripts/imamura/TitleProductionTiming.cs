@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class TitleProductionTiming : MonoBehaviour {
 
-    void Awake()             //開始直後から流れるBGM
+    void Start()             //開始直後から流れるBGM
     {
         if (SceneManager.GetActiveScene().name == "Title")
         {
@@ -37,15 +37,15 @@ public class TitleProductionTiming : MonoBehaviour {
         SoundManager.Instance.PlaySE("CountDown");
     }
 
-    public void STARTSE()            //上のCountDownSEの後のスタートのタイミングで。
-    {
-        SoundManager.Instance.PlaySE("START");
-    }
+    //public void STARTSE()            //上のCountDownSEの後のスタートのタイミングで。
+    //{
+    //    SoundManager.Instance.PlaySE("START");                //音を１２３とGO!で変えると時用
+    //}
 
-    public void ENDSE()            //上のCountDownSEの後の終わるタイミングで。
-    {
-        SoundManager.Instance.PlaySE("END");
-    }
+    //public void ENDSE()            //上のCountDownSEの後の終わるタイミングで。
+    //{
+    //    SoundManager.Instance.PlaySE("END");
+    //}
     
 
     public void DropExchangeSE()            //隣り合ったドロップを交換するタイミングで
@@ -65,19 +65,31 @@ public class TitleProductionTiming : MonoBehaviour {
         EffectManager.Instance.PlayEffect("Beefjerky", new Vector2(x, y), 2.0f);
     }
 
+    public void DoropDestroy(int x, int y)              //ドロップを消したときの処理。モワモワ～           音大丈夫？
+    {
+        SoundManager.Instance.PlaySE("DoropDestroy");
+        EffectManager.Instance.PlayEffect("DoropDestroy", new Vector2(x, y), 2.0f);
+    }
+
     public void OSSANAscensionSE()                  //おっさん昇天時。
     {
         SoundManager.Instance.PlaySE("OSSANAscension");
     }
 
-    public void BeefjerkyCreateSE()            //ジャーぎ―に変わったタイミングで
+    public void BeefjerkyCreateSE()            //ジャーキ―に変わったタイミングで
     {
         SoundManager.Instance.PlaySE("BeefjerkyCreate");
     }
-    public void OSSANEatSE()            //おっさんが食べるときのSE。
+    void Update()
     {
-        SoundManager.Instance.PlaySE("OSSANEat");
-        EffectManager.Instance.PlayEffect("Beefjerky", new Vector2(1, 1), 1.0f); //キー"effectA"に対応したEffectを表示する、Vector2型、指定した時間で消滅
-
+        if (Input.GetKeyDown(KeyCode.Q)) TapBottanSE();
+        if (Input.GetKeyDown(KeyCode.W)) GameStartSE();
+        if (Input.GetKeyDown(KeyCode.E)) CountDownSE();
+        if (Input.GetKeyDown(KeyCode.R)) DropExchangeSE();
+        if (Input.GetKeyDown(KeyCode.T)) BeefjerkyCreateSE(0, 0);
+        if (Input.GetKeyDown(KeyCode.Y)) OSSANEatSE(0, 0);
+        if (Input.GetKeyDown(KeyCode.U)) DoropDestroy(0, 0);
+        if (Input.GetKeyDown(KeyCode.I)) OSSANAscensionSE();
+        if (Input.GetKeyDown(KeyCode.O)) BeefjerkyCreateSE();
     }
 }
