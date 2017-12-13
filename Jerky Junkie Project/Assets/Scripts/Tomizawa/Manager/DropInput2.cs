@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
     int nowX, nowY;//現在選択中のマス位置
@@ -10,6 +11,8 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
 
     [SerializeField]
     List<GameObject> saveList = new List<GameObject>();
+
+    public Color ChangeColor;
 
     private GameObject obj;
     public void ObjectPointerEnter(Character character) {
@@ -41,7 +44,7 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
 
 			ComboDestroyCheck ();
 
-            saveList.Clear();
+            SaveListClear();
         }
     }
 
@@ -82,7 +85,7 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
             {
                 // ヒットオブジェクトを格納
                 //saveList.Clear();
-                saveList.Add(StageManager.Instance.Stage[num[0], num[1]].holdCharacter.gameObject);
+                AddSaveList(StageManager.Instance.Stage[num[0], num[1]].holdCharacter.gameObject); //saveList.Add(StageManager.Instance.Stage[num[0], num[1]].holdCharacter.gameObject);
                 nowX = num[0];
                 nowY = num[1];
 
@@ -132,7 +135,7 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
 
 					// 削除対象オブジェクトを選択していれば実行
 					if (CharacterManager2.Instance.getObjFlg (num [0], num [1]) && comboFlg) {
-							saveList.Add (StageManager.Instance.Stage [num [0], num [1]].holdCharacter.gameObject);
+                        AddSaveList(StageManager.Instance.Stage[num[0], num[1]].holdCharacter.gameObject);//saveList.Add (StageManager.Instance.Stage [num [0], num [1]].holdCharacter.gameObject);
 							Debug.Log (obj);
 						}
                      // コンボ中に削除対象から外れてしまったら実行
@@ -140,7 +143,7 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
 						if (saveList.Count > 1) {
 							ComboDestroyCheck ();
 
-							saveList.Clear ();
+                            SaveListClear();//saveList.Clear ();
 
 							stopper = true;
 						} else {
@@ -172,7 +175,7 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
 		if (saveList.Count >= 4)
 		{
 			GameObject beefjarkey = saveList [saveList.Count - 1];
-			saveList.RemoveAt (saveList.Count - 1);
+            RemoveSaveList(saveList[saveList.Count - 1]);//saveList.RemoveAt (saveList.Count - 1);
 
 			Debug.Log (beefjarkey);
 			CharacterManager2.Instance.RootDestoryInstance(saveList);
@@ -187,8 +190,38 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
         if (saveList.Count >= 2) {
             // 最後のほうから探索
             int num = saveList.FindIndex(x => x == target);
+            for (int i = num + 1; i < saveList.Count; i++) {
+                RemoveColorChange(saveList[i]);
+            }
             saveList.RemoveRange(num + 1, saveList.Count - (num + 1));
         }
+    }
+
+    private void RemoveSaveList(GameObject target) {
+        if (saveList.Remove(target))
+            RemoveColorChange(target);
+    }
+
+    private void AddSaveList(GameObject target) {
+        saveList.Add(target);
+        ColorChange(target);
+    }
+
+    private void SaveListClear() {
+        foreach (GameObject obj in saveList) {
+            RemoveColorChange(obj);
+        }
+        saveList.Clear();
+    }
+
+    private GameObject ColorChange(GameObject target) {
+        target.GetComponent<Image>().color = ChangeColor;
+        return target;
+    }
+
+    private GameObject RemoveColorChange(GameObject target) {
+        target.GetComponent<Image>().color = Color.white;
+        return target;
     }
 
     /**/
