@@ -11,7 +11,8 @@ using DG.Tweening;
 
 public class CutInAnimation : MonoBehaviour
 {
-	[SerializeField] RectTransform rectTransform;
+	[SerializeField] private RectTransform rectTransform = null;
+	[SerializeField] private RectTransform frameTransform = null;
 
 	[SerializeField] private int animStats = 0;
 
@@ -22,18 +23,22 @@ public class CutInAnimation : MonoBehaviour
 
 	private float timeCount = 0.0f;
 
-
-	[SerializeField] float startPosX = 1080.0f;
 	[SerializeField] float endPosX = 0.0f;
 
 	[SerializeField] float inSpeed = 1.0f;
 	[SerializeField] float stopSpeed = 0.5f;
 	[SerializeField] float outSpeed = 1.0f;
 
+	private void Start()
+	{
+		PlayAnimation();
+	}
+
 	public void PlayAnimation()
 	{
 		animStats = 1;
 		PlayAnimation2();
+		PlayAnimation3();
 	}
 
 	private void Update()
@@ -43,7 +48,8 @@ public class CutInAnimation : MonoBehaviour
 			timeCount += Time.deltaTime;
 			curveRate = Mathf.Clamp(curveRate + animSpeed * Time.deltaTime,0.0f,1.0f);
 			rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x,animCurve.Evaluate(curveRate) * 400);
-			if(curveRate == 1)
+			frameTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, animCurve.Evaluate(curveRate) * 400);
+			if (curveRate == 1)
 			{
 				animStats = 0;
 				curveRate = 0.0f;
@@ -51,23 +57,36 @@ public class CutInAnimation : MonoBehaviour
 		}
 	}
 
-	[SerializeField] RectTransform cutInTransform = null;
-
 	public void PlayAnimation2()
 	{
 		
 		var sequence = DOTween.Sequence();
 		sequence.Append(
-			cutInTransform.DOLocalMoveX(30,inSpeed)
+			rectTransform.DOLocalMoveX(-1080 + 30,inSpeed)
 		);
 
-		sequence.Append(cutInTransform.DOLocalMoveX(0, stopSpeed));
+		sequence.Append(rectTransform.DOLocalMoveX(0-1080, stopSpeed));
 		sequence.Append(
-			cutInTransform.DOLocalMoveX(endPosX, outSpeed)).OnComplete(() =>
+			rectTransform.DOLocalMoveX(endPosX-1080, outSpeed)).OnComplete(() =>
 			{
-				cutInTransform.position = new Vector3(startPosX,cutInTransform.position.y,cutInTransform.position.z);
-				Debug.Log(cutInTransform.position.x);
+				Destroy(this.gameObject);
 			}).SetEase(Ease.Linear);
 			
+	}
+	public void PlayAnimation3()
+	{
+
+		var sequence = DOTween.Sequence();
+		sequence.Append(
+			frameTransform.DOLocalMoveX(-1080 + 30, inSpeed)
+		);
+
+		sequence.Append(frameTransform.DOLocalMoveX(0 - 1080, stopSpeed));
+		sequence.Append(
+			frameTransform.DOLocalMoveX(endPosX - 1080, outSpeed)).OnComplete(() =>
+			{
+				Destroy(this.gameObject);
+			}).SetEase(Ease.Linear);
+
 	}
 }

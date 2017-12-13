@@ -24,6 +24,10 @@ public class UIManager : MonoBehaviour {
 	[SerializeField] private AnimationScore animationScore = null; //スコアテキストのアニメーションを行うスクリプト
 	[SerializeField] private CutInAnimation cutInAnimation = null;
 
+	[SerializeField] private Transform cutInParent = null;
+	[SerializeField] private GameObject cutInPrefab = null;
+	[SerializeField] private Vector3 cutInPos = Vector3.zero;
+
 	public int saveScore = 0; //直前のスコアを保存する
 
 	private float maxT = 60.0f; //制限時間
@@ -34,8 +38,6 @@ public class UIManager : MonoBehaviour {
 		GameObject soundObj = GameObject.Find("SoundManager"); //SoundManagerオブジェクトのキャッシュ
 		audioSource[0] = soundObj.transform.Find("BGMManager").GetComponent<AudioSource>(); //BGMのAudioSourceのキャッシュ
 		audioSource[1] = soundObj.transform.Find("SEManager").GetComponent<AudioSource>(); //SEのAudioSourceのキャッシュ
-
-		PlayCutIn();
 	}
 	 /// <summary>
 	 /// ゲーム残り時間のUIを更新する関数。
@@ -60,7 +62,8 @@ public class UIManager : MonoBehaviour {
 
 	public void PlayCutIn()
 	{
-		cutInAnimation.PlayAnimation();
+		GameObject obj = Instantiate(cutInPrefab,cutInPos,transform.rotation) as GameObject;
+		obj.transform.parent = cutInParent;
 	}
 
 	/// <summary>
