@@ -147,14 +147,14 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
 
 							stopper = true;
 						} else {
-							CharacterManager2.Instance.DirectionObjMove (nowX, nowY, num [0], num [1]);
+							//CharacterManager2.Instance.DirectionObjMove (nowX, nowY, num [0], num [1]);
 
 						}
 					 }
                       // 削除対象以外を選択時実行
                       else{
 
-						CharacterManager2.Instance.DirectionObjMove (nowX, nowY, num [0], num [1]);
+						//CharacterManager2.Instance.DirectionObjMove (nowX, nowY, num [0], num [1]);
 
 						//Debug_CharacterDataLog ();
 						//CharaManager.CombinationSearch (i, j);
