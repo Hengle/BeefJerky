@@ -18,7 +18,7 @@ public class DropInput : MonoBehaviour {
 	bool InputFlg,ChangeFlg;			//!<　一回しか処理をさせないストッパー変数
 	bool comboFlg,stopper;
 
-	CharacterData comboSaveObj;			//!<　削除するドロップを格納するリスト
+	//CharacterData comboSaveObj;			//!<　削除するドロップを格納するリスト
 	CharacterManager CharaManager;		//!<　CharaManagerインスタンス
 	[SerializeField]
 	List<CharacterData> SaveObj;		//!<　削除するドロップを格納するリスト
@@ -117,7 +117,6 @@ public class DropInput : MonoBehaviour {
 											
 											SaveObj.Add (CharaManager.CharacterInstance [i, j]);
 											comboFlg = true;
-
 										} 
 										// コンボ中に削除対象から外れてしまったら実行
 										else if (!CharaManager.getObjFlg (i, j) && comboFlg) {

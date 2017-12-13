@@ -7,7 +7,15 @@ public struct CharacterData2
 {
     public Sprite m_CharacterSprite;
     public string m_SpriteName;
-    internal int m_SpriteNum;
+    [SerializeField]
+    internal DropType m_SpriteNum;
+}
+
+enum DropType {
+    usi,//牛
+    jaki,//ジャーキー
+    ozisan,//おじさん
+    biru,//ビール
 }
 
 public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
@@ -19,46 +27,28 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
     private CharacterData2[] charactersData;
     [SerializeField]
     private Character characterPrefab;
-    private Dictionary<string, int> CharaNum = new Dictionary<string, int>();
+    //private Dictionary<string, int> CharaNum = new Dictionary<string, int>();
+    public string DestroyName;
 
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
-        Init();
-
         
+        /*
         for (int i = 0; i < charactersData.Length; i++) {
             CharaNum[charactersData[i].m_SpriteName] = i;
             charactersData[i].m_SpriteNum = CharaNum[charactersData[i].m_SpriteName];
-        }
-    }
-
-    private void Init()
-    {
-        //StageにCharacterを配置　Stageから呼び出すので不要
-    }
-
-    private void Start()
-    {
-        /*
-        for (int i = 0; i < CharacterInstance.GetLength(0); i++)
-        {
-            for (int j = 0; j < CharacterInstance.GetLength(1); j++)
-            {
-
-                int l_random = Random.Range(0, charactersData.Length);
-
-                // 全マス均一な大きさにするため、最初のマスの大きさを使う
-                dropSize.x = charactersData[0].m_CharacterSprite.GetComponent<RectTransform>().sizeDelta.x;
-                dropSize.y = charactersData[0].m_CharacterSprite.GetComponent<RectTransform>().sizeDelta.y;
-
-                //生成地点を取得する
-                //Vector2 vec2Pos = new Vector2(InitPos.position.x + Width * j, InitPos.position.y - Height * i);
-                //RandomCreate(i, j, vec2Pos, 0, charactersData.Length);
-
-            }
         }*/
     }
+    /*
+    public void CharactersDateInitialize(List<Character> characters) {
+        for (int i = 0; i < characters.Count; i++)
+        {
+            CharaNum[characters[i].data.m_SpriteName] = i;
+            characters[i].data.m_SpriteNum = CharaNum[characters[i].data.m_SpriteName];
+            Debug.Log(CharaNum[characters[i].data.m_SpriteName]);
+        }
+    }*/
 
     /// <summary>
     /// 指定した番号の種類のCharacterを生成する
@@ -68,7 +58,6 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
     public Character CreateCharacter(int num) {
         Character chara = Instantiate(characterPrefab);
         chara.data = CreateCharacterData(num);
-
         return chara;
     }
 
@@ -80,7 +69,7 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
     public Character CreateCharacter(string name) {
         Character chara = Instantiate(characterPrefab);
         chara.data = CreateCharacterData(name);
-
+        //chara.data.m_SpriteNum = charactersData[CharaNum[name]].m_SpriteNum;
         return chara;
     }
 
@@ -98,6 +87,7 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
     /// <param name="num"></param>
     /// <returns></returns>
     public CharacterData2 CreateCharacterData(int num) {
+        Debug.Log(charactersData[num].m_SpriteNum);
         return charactersData[num];
     }
 
@@ -259,6 +249,13 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
                 break;
         }
     }
+
+    public bool getObjFlg(int x, int y)
+    {
+        Debug.Log(StageManager.Instance.Stage[x, y].stayCharacter.data.m_SpriteNum);
+        return StageManager.Instance.Stage[x, y].stayCharacter.data.m_SpriteNum == DropType.usi;
+    }
+
     /*
     private void RootDestroy
         */
