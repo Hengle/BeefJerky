@@ -21,7 +21,7 @@ public class StageChip : MonoBehaviour {
     /// <summary>
     /// このマスからCharacterを出す処理
     /// </summary>
-    private Character RemoveCharacter() {
+    public Character RemoveCharacter() {
         Character character = _character;
         _character = null;
         return character;

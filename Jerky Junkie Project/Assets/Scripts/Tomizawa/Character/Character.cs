@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// パズルで消されるキャラクターClass
@@ -8,6 +9,14 @@ using UnityEngine;
 public class Character : MonoBehaviour {
     public Coroutine move;
     public bool isMove { get { return move == null; } }
+
+    public CharacterData2 data;
+
+    public void Init(CharacterData2 data) {
+        this.data = data;
+        //this.data.m_CharacterSprite = gameObject;
+        GetComponent<Image>().sprite = data.m_CharacterSprite;
+    }
 
     public void MoveStart(Vector2 pos) {
         if (move != null) StopCoroutine(move);

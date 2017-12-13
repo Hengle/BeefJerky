@@ -10,11 +10,11 @@ using UnityEngine;
 
 
 [System.Serializable]
-internal struct CharacterData
+public struct CharacterData
 {
-	public GameObject m_CharacterSprite;
-	public string m_SpriteName;
-	internal int m_SpriteNum;
+    public GameObject m_CharacterSprite;
+    public string m_SpriteName;
+    internal int m_SpriteNum;
 }
 
 public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
@@ -59,8 +59,6 @@ public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
 			CharaNum [CharaData [i].m_SpriteName] = i;
 			CharaData [i].m_SpriteNum = CharaNum [CharaData [i].m_SpriteName];
 		}
-
-
 	}
 
 	private void Start()
@@ -107,7 +105,6 @@ public class CharacterManager : SingletonMonoBehaviour<CharacterManager> {
 	 */
 	internal void search(int num, ref List<CharacterData> objList,int x,int y)
 	{
-		
 //		var s(int x,int y) => {
 //			if (!objList.Find (CharacterInstance [x != 0? x + direction : 0, y].m_CharacterSprite)) {
 //				objList.Add (CharacterInstance [x != 0? x + direction : 0, y].m_CharacterSprite);
