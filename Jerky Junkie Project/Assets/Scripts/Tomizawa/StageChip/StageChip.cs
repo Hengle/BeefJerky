@@ -32,9 +32,9 @@ public class StageChip : MonoBehaviour {
     /// </summary>
     public void AddCharacter(Character target, bool isInit = false) {
         _character = target;
-        _character.transform.SetParent(transform);
+        //_character.transform.SetParent(transform);
         if (isInit)
-            _character.transform.localPosition = Vector2.zero;
+            _character.transform.position = position;
         else
             _character.MoveStart(position);
     }

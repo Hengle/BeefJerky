@@ -8,6 +8,7 @@ using UnityEngine.UI;
 /// </summary>
 public class StageManager : SingletonMonoBehaviour<StageManager> {
     public StageChip[,] Stage;//ステージ配列
+    public int[] StageLength { get { return new int[] { x, y }; } }
     private StageChip[,] backGroundStage;//ステージの上に配置する落ちてくる用のChip置き場
     [SerializeField]
     private int x, y;//Stageの大きさ
@@ -34,7 +35,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
         Stage = InitStage();
         backGroundStage = InitStage(true);
         CharacterInit(Stage);
-        CharacterInit(backGroundStage);
+        CharacterInit(backGroundStage,true);
 	}
 
     private void Update()
@@ -48,7 +49,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
             foreach (StageChip chip in backGroundStage)
             {
                 if (chip.stayCharacter == null)
-                    chip.AddCharacter(InitCharacter());
+                    chip.AddCharacter(InitCharacter(true));
             }
         }
     }
@@ -107,9 +108,9 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     /// Characterをステージ一杯に生成する処理
     /// </summary>
     /// <param name="stage"></param>
-    private void CharacterInit(StageChip[,] stage) {
+    private void CharacterInit(StageChip[,] stage,bool isBack = false) {
         foreach (StageChip chips in stage) {
-            Character character = InitCharacter();
+            Character character = InitCharacter(isBack);
             chips.AddCharacter(character,true);
         }
     }
@@ -142,12 +143,40 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
         updateFlag = true;
     }
 
+    private GameObject characterParent;
+    public GameObject CharacterParent {
+        get {
+            if (characterParent != null) return characterParent;
+            else {
+                characterParent = new GameObject("characters");
+                characterParent.transform.SetParent(transform);
+                return characterParent;
+            }
+        } }
+    private GameObject characterBackParent;
+    public GameObject CharacterBackParent {
+        get {
+            if (characterBackParent != null) return characterBackParent;
+            else {
+                characterBackParent = new GameObject("backs");
+                characterBackParent.SetActive(false);
+                characterBackParent.transform.SetParent(transform);
+                return characterBackParent;
+            }
+        }
+    }
     /// <summary>
     /// Characterを生成する処理
     /// </summary>
     /// <returns></returns>
-    private Character InitCharacter() {
-        return Instantiate(characterPrefabs[Random.Range(0, characterPrefabs.Count)]);
+    private Character InitCharacter(bool isBack = false) {
+        Character chara = Instantiate(characterPrefabs[Random.Range(0, characterPrefabs.Count)]);
+        if (isBack) {
+            chara.transform.SetParent(CharacterBackParent.transform);
+        }
+        else
+            chara.transform.SetParent(CharacterParent.transform);
+        return chara;
     }
 
     /// <summary>
@@ -193,6 +222,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
             if (y == 0) {
                 if (backGroundStage[x, backGroundStage.GetLength(1) - 1].stayCharacter)
                 {
+                    backGroundStage[x, backGroundStage.GetLength(1) - 1].stayCharacter.transform.SetParent(CharacterParent.transform);
                     Stage[x, y].MoveCharacter(backGroundStage[x, backGroundStage.GetLength(1) - 1]);
                 }
                 else {
