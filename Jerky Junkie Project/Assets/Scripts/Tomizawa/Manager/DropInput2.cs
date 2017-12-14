@@ -221,11 +221,13 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
     }
 
     private GameObject ColorChange(GameObject target) {
+        if (!target) return null;
         target.GetComponent<Image>().color = ChangeColor;
         return target;
     }
 
     private GameObject RemoveColorChange(GameObject target) {
+        if (!target) return null;
         target.GetComponent<Image>().color = Color.white;
         return target;
     }

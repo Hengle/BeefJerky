@@ -110,8 +110,9 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
     internal void RootDestoryInstance(List<GameObject> objList)
     {
         foreach (GameObject obj in objList) {
-            //一つずつ削除してもらう
-            StageManager.Instance.DeleteCharacter(obj.GetComponent<Character>());
+            if (obj)
+                //一つずつ削除してもらう
+                StageManager.Instance.DeleteCharacter(obj.GetComponent<Character>());
         }
         /*
         for (int i = 0; i < objList.Count; i++)
