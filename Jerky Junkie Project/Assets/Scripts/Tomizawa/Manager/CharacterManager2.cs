@@ -34,6 +34,12 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
 
     private void Awake()
     {
+		// CharacterManagerを登録
+		if (this != Instance) {
+			Destroy (this);
+			return;
+		}
+
         DontDestroyOnLoad(gameObject);
         
         /*
@@ -201,50 +207,62 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
     /// <param name="characters"></param>
     /// <param name="type"></param>
     public void Combination(List<GameObject> characters, DropType type, int x = 0,int y = 0) {
-        switch (type) {
-            case DropType.usi:
-                break;
-            case DropType.ozisan:
-                if (StageManager.Instance.Stage[x, y].character.isChecked) break;
+		switch (type) {
+		case DropType.usi:
+			break;
+		case DropType.ozisan:
+			if (StageManager.Instance.Stage [x, y].character.isChecked)
+				break;
                 //ジャーキーと隣あったら、そのジャーキーと繋がっている全てのジャーキーを消滅させる
-                search(DropType.jaki, characters, x, y);
+			search (DropType.jaki, characters, x, y);
                 //同時に、消したキャラクターの周囲１マス内（斜め含む）にあるビールを消滅させる
-                search(DropType.jaki, characters, x, y, true);
-                List<GameObject> charas = new List<GameObject>(characters);
+			search (DropType.jaki, characters, x, y, true);
+			List<GameObject> charas = new List<GameObject> (characters);
                 //ジャーキーやビールの数
-                int jakiCount = 0;
-                foreach (GameObject c in charas) {
-                    Character character = c.GetComponent<Character>();
-                    if (character.data.m_DropType == DropType.jaki)
-                    {
-                        search(DropType.biru, characters, character.data.path[0], character.data.path[1], false, true, 1);
-                        jakiCount++;
-                    }
-                }
-                if (jakiCount == 0) break;//ジャーキーが無ければ消さない
+			int jakiCount = 0;
+			foreach (GameObject c in charas) {
+				Character character = c.GetComponent<Character> ();
+				if (character.data.m_DropType == DropType.jaki) {
+					search (DropType.biru, characters, character.data.path [0], character.data.path [1], false, true, 1);
+					jakiCount++;
+				}
+			}
+			if (jakiCount == 0)
+				break;//ジャーキーが無ければ消さない
                 //int biruCount = 0;
                 //foreach (GameObject c in characters) {
                 //    if (c.GetComponent<Character>().data.m_DropType == DropType.biru) biruCount++;
                 //}
 
-                int score = (5000 + (jakiCount > 4 ? 3000 + (jakiCount - 4) * 500 : (jakiCount - 1) * 1000));//* (1 + biruCount / 10);
+			int score = (5000 + (jakiCount > 4 ? 3000 + (jakiCount - 4) * 500 : (jakiCount - 1) * 1000));//* (1 + biruCount / 10);
                 //Debug.Log(score);
-                HiScore.Instance.AddPoint(score);
+			HiScore.Instance.AddPoint (score);
+			foreach (GameObject c in charas) {
+				Character character = c.GetComponent<Character> ();
+				if (character.data.m_DropType == DropType.ozisan) {
+					EffectManager.Instance.PlayEffect ("Ozisan", new Vector2 (c.transform.position.x, c.transform.position.y), 1f);
+				}
+				EffectManager.Instance.PlayEffect ("OzisanEmission", new Vector2 (c.transform.position.x, c.transform.position.y), .5f);
+			}
+			RootDestoryInstance (characters);
+			break;
 
-                RootDestoryInstance(characters);
-                break;
-            case DropType.biru:
-                if (StageManager.Instance.Stage[x, y].character.isChecked) break;
-                search(DropType.biru, characters, x, y);
-                if (characters.Count >= 4) {
-                    RootDestoryInstance(characters);
-                }
-                break;
-            case DropType.jaki:
-            default:
-                break;
-        }
-    }
+		case DropType.biru:
+			if (StageManager.Instance.Stage [x, y].character.isChecked)
+				break;
+			search (DropType.biru, characters, x, y);
+			if (characters.Count >= 4) {
+				foreach (GameObject input in characters) {
+					EffectManager.Instance.PlayEffect ("Beell", new Vector2 (input.transform.position.x, input.transform.position.y), .5f);
+				}
+				RootDestoryInstance (characters);
+			}
+			break;
+		case DropType.jaki:
+		default:
+			break;
+		}
+	}
 
     /**
 	 * @brief				組になっているかどうかサーチする処理
@@ -273,6 +291,7 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
         Debug.Log(StageManager.Instance.Stage[x, y].holdCharacter.data.m_DropType);
         return StageManager.Instance.Stage[x, y].holdCharacter.data.m_DropType == DropType.usi;
     }
+
 
     /*
     private void RootDestroy

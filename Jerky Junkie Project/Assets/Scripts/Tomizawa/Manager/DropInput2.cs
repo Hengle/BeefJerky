@@ -27,6 +27,13 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
     
     private void Update()
     {
+		if (Time.timeScale == 0)
+			return;
+
+		if (saveList.Count > 0 && saveList [0] == null) {
+			SaveListClear();
+		}
+
         if (Input.GetMouseButton(0))
         {
             RayhitDrop();
@@ -101,8 +108,8 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
 			if (saveList.Count != 0 && !ChangeFlg) {
 
 				// 他のマスに移動していれば(最初の入力で受け取ったオブジェクトと違うオブジェクトを選択していたら)実行 //ドロップの入れ替え処理
-				if (saveList [0] == obj)
-					return;
+//				if (saveList [0] == obj)
+//					return;
 
 				if (saveList.Count == 0 || ChangeFlg)
 					return;
@@ -140,16 +147,16 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
 						}
                      // コンボ中に削除対象から外れてしまったら実行
                     else if (!CharacterManager2.Instance.getObjFlg (num [0], num [1]) && comboFlg) {
-						if (saveList.Count > 1) {
+//						if (saveList.Count > 1) {
 							ComboDestroyCheck ();
 
                             SaveListClear();//saveList.Clear ();
 
 							stopper = true;
-						} else {
-							//CharacterManager2.Instance.DirectionObjMove (nowX, nowY, num [0], num [1]);
-
-						}
+//						} else {
+//							CharacterManager2.Instance.DirectionObjMove (nowX, nowY, num [0], num [1]);
+//
+//						}
 					 }
                       // 削除対象以外を選択時実行
                       else{
@@ -174,13 +181,21 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
 	{
 		if (saveList.Count >= 4)
 		{
+			// エフェクトを出すためにリストをコピー
+			GameObject[] _list = new GameObject[saveList.Count];
+			saveList.CopyTo (_list);
+			// ビーフジャーキーになる部分を取り出す
 			GameObject beefjarkey = saveList [saveList.Count - 1];
             RemoveSaveList(saveList[saveList.Count - 1]);//saveList.RemoveAt (saveList.Count - 1);
 
-			Debug.Log (beefjarkey);
+
 			CharacterManager2.Instance.RootDestoryInstance(saveList);
 
 			StageManager.Instance.CreateBeefjarkey (beefjarkey);
+
+			foreach(GameObject combo in _list){
+				EffectManager.Instance.PlayEffect ("Jarkey", new Vector2 (combo.transform.position.x, combo.transform.position.y), .5f);
+			}
 		}
 	}
 
@@ -208,9 +223,12 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
     }
 
     private void SaveListClear() {
-        foreach (GameObject obj in saveList) {
-            RemoveColorChange(obj);
-        }
+		if (saveList.Count > 0 && saveList [0] != null) {
+			foreach (GameObject obj in saveList) {
+				RemoveColorChange (obj);
+			}
+		}
+
         saveList.Clear();
     }
 

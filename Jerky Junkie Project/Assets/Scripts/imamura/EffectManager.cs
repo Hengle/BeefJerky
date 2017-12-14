@@ -19,6 +19,7 @@ public class EffectManager : MonoBehaviour {
 
 	[SerializeField] float posZ= 0.0f;
 
+
 	public static EffectManager Instance
 	{
 		get
@@ -62,6 +63,7 @@ public class EffectManager : MonoBehaviour {
 		if (effectDate.TryGetValue(effectKey, out nullObj))
 		{
 			GameObject obj =  Instantiate(nullObj,pos,transform.rotation)as GameObject;
+
 			Destroy(obj,lifeTime);
 		}
 		else
@@ -75,6 +77,9 @@ public class EffectManager : MonoBehaviour {
 		if (effectDate.TryGetValue(effectKey, out nullObj))
 		{
 			GameObject obj = Instantiate(nullObj, new Vector3(pos.x,pos.y,posZ), transform.rotation) as GameObject;
+
+			obj.transform.SetParent (StageManager.Instance.EffectParent.transform);
+			//moveUp (obj);
 			Destroy(obj, lifeTime);
 		}
 		else

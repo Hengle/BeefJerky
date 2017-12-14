@@ -222,6 +222,18 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
             }
         }
     }
+	private GameObject effectParent;
+	public GameObject EffectParent {
+		get {
+			if (effectParent != null) return effectParent;
+			else {
+				effectParent = new GameObject("effectBox");
+				effectParent.transform.SetParent(transform);
+				return effectParent;
+			}
+		}
+	}
+
     /// <summary>
     /// Characterを生成する処理
     /// </summary>
@@ -344,16 +356,6 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 		}
 
 		return output;
-	}
-
-	public void SetStageChip(StageChip _stageChip)
-	{
-		foreach (StageChip _output in Stage) {
-			if (_output.gameObject == _stageChip.gameObject) {
-				//_output = _stageChip;
-				break;
-			}
-		}
 	}
 
 	public void CreateBeefjarkey(GameObject checkMapObj)
