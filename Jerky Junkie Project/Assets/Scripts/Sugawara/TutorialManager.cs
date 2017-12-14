@@ -16,35 +16,44 @@ public class TutorialManager : MonoBehaviour {
 
     private int phase;
 
+    private bool isTest = false;
+
 	void Start () {
 
-		phase = 0;
+
+        // titleProductionTiming.GayaSE(0);
+        SoundManager.Instance.PlayBGM("GayaBGM");//ガヤの音を流す
+        Debug.Log("ガヤ開始");
+        phase = 0;
 		panels[0].SetActive(true);
 		panels[1].SetActive(false);
 
 		Invoke("ButtonMake",buttonSpeed);
 
-        titleProductionTiming.GayaSE();//ガヤの音を流す
+        
 	}
 
 	private void ButtonMake()
 	{
-		buttons[phase].SetActive(true);
-	}
+
+        buttons[phase].SetActive(true);
+    }
 
 	public void ButtonPush(int num)
 	{
 		phase++;
-		
-		if(phase == 1)
+        if (phase == 1)
 		{
-			panels[0].SetActive(false);
+            
+            panels[0].SetActive(false);
 			panels[1].SetActive(true);
 			Invoke("ButtonMake", buttonSpeed);
 		}
 		else if(phase == 2)
 		{
-			timerController.GameStart();
+            SoundManager.Instance.StopBGM("GayaBGM");
+            Debug.Log("ガヤ停止");
+            timerController.GameStart();
 			Destroy(this.gameObject);
 		}
 	}

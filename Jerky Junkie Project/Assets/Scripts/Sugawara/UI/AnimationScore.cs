@@ -25,7 +25,9 @@ public class AnimationScore: MonoBehaviour
 
 	public void AnimationPlay(int beforeScore,int afterScore)
 	{
-		StartCoroutine(ScoreAnimation(beforeScore, afterScore, speed));
+		scoreText.text = afterScore.ToString("D3");
+
+		//StartCoroutine(ScoreAnimation(beforeScore, afterScore, speed));
 		animStats = 1;
 	}
 

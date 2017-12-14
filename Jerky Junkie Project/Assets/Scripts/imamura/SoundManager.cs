@@ -99,10 +99,10 @@ public class SoundManager : MonoBehaviour {
 
     public void PlaySE(string seKey)
     {
-        if (seDate.TryGetValue(seKey,out nullClip))
+        if (seDate.TryGetValue(seKey, out nullClip))
         {
             seAudiosource.PlayOneShot(seDate[seKey]);
-        }else
+        } else
         {
             //Debug.Log(seKey+"に対応したSEはありません");
         }
@@ -118,6 +118,20 @@ public class SoundManager : MonoBehaviour {
         else
         {
            // Debug.Log("に対応したBGMはありません");
+        }
+    }
+
+    //辻野追加
+    public void StopBGM(string bgmKey)
+    {
+        if (bgmDate.TryGetValue(bgmKey, out nullClip))
+        {
+            bgmAudiosource.clip = nullClip;
+            bgmAudiosource.Stop();
+        }
+        else
+        {
+            // Debug.Log("に対応したBGMはありません");
         }
     }
 

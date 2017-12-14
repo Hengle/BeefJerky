@@ -188,6 +188,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
             case DropType.ozisan:
                 OzisanCount--;
                 StageManager.Instance.score++;
+				HiScore.Instance.AddPoint(1);
                 break;
         }
         Destroy(target.gameObject);
