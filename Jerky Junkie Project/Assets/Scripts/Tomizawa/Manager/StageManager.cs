@@ -217,14 +217,28 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
             }
         }
     }
+	private GameObject effectParent;
+	public GameObject EffectParent
+	{
+		get
+		{
+			if (effectParent != null) return effectParent;
+			else
+			{
+				effectParent = new GameObject("effectBox");
+				effectParent.transform.SetParent(transform);
+				return effectParent;
+			}
+		}
+	}
 
-    /// <summary>
-    /// Characterを生成する処理
-    /// </summary>
-    /// <param name="isBack"></param>
-    /// <param name="excepts">生成したくないキャラクターのタイプ</param>
-    /// <returns></returns>
-    private Character InitCharacter(bool isBack = false,params DropType[] excepts) {
+	/// <summary>
+	/// Characterを生成する処理
+	/// </summary>
+	/// <param name="isBack"></param>
+	/// <param name="excepts">生成したくないキャラクターのタイプ</param>
+	/// <returns></returns>
+	private Character InitCharacter(bool isBack = false,params DropType[] excepts) {
         List<Character> list = new List<Character>(characterPrefabs);
         Character prefab;
         int i = 0;

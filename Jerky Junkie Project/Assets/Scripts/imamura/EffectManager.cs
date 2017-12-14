@@ -75,6 +75,8 @@ public class EffectManager : MonoBehaviour {
 		if (effectDate.TryGetValue(effectKey, out nullObj))
 		{
 			GameObject obj = Instantiate(nullObj, new Vector3(pos.x,pos.y,posZ), transform.rotation) as GameObject;
+
+			obj.transform.SetParent(StageManager.Instance.EffectParent.transform);
 			Destroy(obj, lifeTime);
 		}
 		else

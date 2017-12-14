@@ -307,14 +307,25 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
             case DropType.usi:
                 if (characters.Count >= 4)
                 {
+					Character a;
+					
+					Character[] _list = new Character[characters.Count];
+					characters.CopyTo(_list);
+
                     //score = 1000 + (characters.Count - 4) * 500;
                     Character beefjarkey = characters[characters.Count - 1];
-                    characters.Remove(characters[characters.Count - 1]);
+
+					EffectManager.Instance.PlayEffect("OzisanEmission", new Vector2(beefjarkey.transform.position.x, beefjarkey.transform.position.y), .5f);
+
+					characters.Remove(characters[characters.Count - 1]);
 					StageManager.Instance.CreateBeefjarkey(beefjarkey, characters.Count);
 
 					RootDestoryInstance(characters);
 
-                    
+                    foreach(Character c in characters)
+					{
+						EffectManager.Instance.PlayEffect("Jarkey", new Vector2(c.transform.position.x, c.transform.position.y), .5f);
+					}
                 }
                 break;
             case DropType.ozisan:
@@ -354,16 +365,30 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
                 Debug.Log(characters.Count);
                 //AddTime(2 + (jakiCount - 1) * 0.5f);
 
+				foreach(Character c in characters)
+				{
+					if(c.data.m_DropType == DropType.ozisan)
+					{
+						EffectManager.Instance.PlayEffect("Ozisan", new Vector2(c.transform.position.x, c.transform.position.y), 1f);
+					}
+					EffectManager.Instance.PlayEffect("OzisanEmission", new Vector2(c.transform.position.x, c.transform.position.y), .5f);
+				}
+
                 RootDestoryInstance(characters);
                 break;
             case DropType.biru:
-                /*
-                if (StageManager.Instance.Stage[x, y].character.isChecked) break;
-                search(DropType.biru, characters, x, y);
-                if (characters.Count >= 4) {
-                    RootDestoryInstance(characters);
-                }*/
-                break;
+
+				if (StageManager.Instance.Stage[x, y].character.isChecked) break;
+				search(DropType.biru, characters, x, y);
+				if (characters.Count >= 4)
+				{
+					foreach(Character c in characters)
+					{
+						EffectManager.Instance.PlayEffect("Beell", new Vector2(c.transform.position.x, c.transform.position.y), .5f);
+					}
+					RootDestoryInstance(characters);
+				}
+				break;
             case DropType.jaki:
             default:
                 break;

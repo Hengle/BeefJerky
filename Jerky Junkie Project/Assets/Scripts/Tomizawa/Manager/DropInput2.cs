@@ -13,6 +13,8 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
     List<Character> saveList = new List<Character>();
 
     public Color ChangeColor;
+	[SerializeField]
+	Sprite[] image;
 
     private GameObject obj;
     public void ObjectPointerEnter(Character character) {
@@ -211,14 +213,25 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
 
     private Character ColorChange(Character target) {
         if (!target) return null;
-        target.GetComponent<Image>().color = ChangeColor;
-        return target;
+
+		target.GetComponent<Image>().color = ChangeColor;
+		if(target.data.m_DropType == DropType.usi)
+		{
+			target.GetComponent<BeffeLineFace>().BeffeLineStart();
+		}
+	
+		return target;
     }
 
     private Character RemoveColorChange(Character target) {
         if (!target) return null;
-        target.GetComponent<Image>().color = Color.white;
-        return target;
+
+		target.GetComponent<Image>().color = Color.white;
+		if (target.data.m_DropType == DropType.usi)
+		{
+			target.GetComponent<BeffeLineFace>().BeffeLineEnd();
+		}
+		return target;
     }
 
     /**/
