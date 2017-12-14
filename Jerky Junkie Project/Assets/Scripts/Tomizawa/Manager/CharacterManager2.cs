@@ -31,26 +31,57 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
     private Character characterPrefab;
     //private Dictionary<string, int> CharaNum = new Dictionary<string, int>();
     public string DestroyName;
+    [SerializeField]
+    private int comboCount;
+    //ComboTextの透明度取得
+    public float comboTextAlpha { get{
+            if (comboTime > 0)
+                return comboTime / ConstData.COMBO_LIMIT_TIME;
+            else return 0;
+        } }
+    public float comboBonus { get { return 1 + comboCount / 10.0f; } }
+    private float comboTime;
 
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
-        
-        /*
-        for (int i = 0; i < charactersData.Length; i++) {
-            CharaNum[charactersData[i].m_SpriteName] = i;
-            charactersData[i].m_SpriteNum = CharaNum[charactersData[i].m_SpriteName];
-        }*/
     }
-    /*
-    public void CharactersDateInitialize(List<Character> characters) {
-        for (int i = 0; i < characters.Count; i++)
-        {
-            CharaNum[characters[i].data.m_SpriteName] = i;
-            characters[i].data.m_SpriteNum = CharaNum[characters[i].data.m_SpriteName];
-            Debug.Log(CharaNum[characters[i].data.m_SpriteName]);
+
+    public void Update()
+    {
+        ComboCheck();
+    }
+
+    /// <summary>
+    /// コンボの時間経過を確認する
+    /// </summary>
+    private void ComboCheck() {
+        if (comboCount == 0) return;
+        comboTime -= Time.deltaTime;
+        if (comboTime <= 0){
+            comboCount = 0;
+            comboTime = 0;
         }
-    }*/
+    }
+
+    /// <summary>
+    /// コンボ数を増やす
+    /// </summary>
+    /// <param name="objects"></param>
+    private void AddCombo(List<GameObject> objects) {
+        comboCount++;
+        comboTime = ConstData.COMBO_LIMIT_TIME;
+
+        //combo表示位置を計算する
+        Vector3 comboPos = Vector3.zero;
+        if (objects.Count > 0) {
+            foreach (GameObject obj in objects) {
+                comboPos += obj.transform.position;
+            }
+            comboPos /= objects.Count - 1;
+        }
+        
+    }
 
     /// <summary>
     /// 指定した番号の種類のCharacterを生成する
@@ -230,10 +261,12 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
                 //}
 
                 score = (5000 + (jakiCount - 1) * 1000);//* (1 + biruCount / 10);
-                //Debug.Log(score);
+                if (score > 0)
+                {
+                    AddScore(score, characters);
+                }
 
-                float time = 2 + (jakiCount - 1) * 0.5f;
-                TimerController.Instance.AddTime(time);
+                AddTime(2 + (jakiCount - 1) * 0.5f);
 
                 RootDestoryInstance(characters);
                 break;
@@ -242,6 +275,10 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
                 search(DropType.biru, characters, x, y);
                 if (characters.Count >= 4) {
                     score = characters.Count * 500 - 1000;
+                    if (score > 0)
+                    {
+                        AddScore(score, characters);
+                    }
                     RootDestoryInstance(characters);
                 }
                 break;
@@ -249,9 +286,23 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
             default:
                 break;
         }
-        if (score > 0) {
-            HiScore.Instance.AddPoint(score);
-        }
+    }
+
+    /// <summary>
+    /// 時間延長処理
+    /// </summary>
+    /// <param name="value"></param>
+    private void AddTime(float value) {
+        TimerController.Instance.AddTime(value * comboBonus);
+    }
+
+    /// <summary>
+    /// スコアの獲得処理
+    /// </summary>
+    /// <param name="value"></param>
+    private void AddScore(int value,List<GameObject> objects) {
+        HiScore.Instance.AddPoint(Mathf.FloorToInt(100 * comboBonus));
+        AddCombo(objects);
     }
 
     /**
