@@ -25,6 +25,8 @@ public class HiScore : SingletonMonoBehaviour<HiScore> {
 			score = value;
 			uIManager.ScoreUpdate(score);
 			uIManager.PlayCutIn();
+			if (score > highScore)
+				uIManager.HighScoreUpdate();
 		}
 	}
 

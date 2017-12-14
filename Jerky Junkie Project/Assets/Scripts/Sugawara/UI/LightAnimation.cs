@@ -15,6 +15,8 @@ public class LightAnimation : MonoBehaviour {
 
 	[SerializeField] Image[] lightImage = null;
 
+	[SerializeField] private bool light = false;
+
 	private float startscale;
 
 	private Vector3 objScale;
@@ -24,14 +26,13 @@ public class LightAnimation : MonoBehaviour {
 	void Start () {
 		rectTransform = GetComponent<RectTransform>();
 		startscale = rectTransform.localScale.x;
-		Debug.Log(startscale * magnification);
 	}
 
 	private void Update()
 	{
 		countTime += Time.deltaTime;
 		if(startTime == 0)
-		{
+		{ 
 			if (countTime > intervalTime)
 			{
 				PlayAnimation();
@@ -56,10 +57,12 @@ public class LightAnimation : MonoBehaviour {
 			objScale.y = Mathf.Clamp(objScale.y, startscale, startscale * magnification);
 			objScale.z = Mathf.Clamp(objScale.z, startscale, startscale * magnification);
 			rectTransform.localScale = objScale;
-			Debug.Log(objScale.x.ToString() + "  :  " + (startscale * magnification).ToString() + " = " + (objScale.x / (startscale*magnification)));
-			lightImage[0].color = new Color(lightImage[0].color.r, lightImage[0].color.g, lightImage[0].color.b,((objScale.x/(startscale*magnification)-0.2f) * 0.4f));
-			lightImage[1].color = new Color(lightImage[1].color.r, lightImage[1].color.g, lightImage[1].color.b, ((objScale.x / (startscale * magnification) - 0.2f) * 0.4f));
 
+			if (light)
+			{
+				lightImage[0].color = new Color(lightImage[0].color.r, lightImage[0].color.g, lightImage[0].color.b, ((objScale.x / (startscale * magnification) - 0.2f) * 0.4f));
+				lightImage[1].color = new Color(lightImage[1].color.r, lightImage[1].color.g, lightImage[1].color.b, ((objScale.x / (startscale * magnification) - 0.2f) * 0.4f));
+			}
 			if (rectTransform.localScale.x >= startscale * magnification)
 			{
 				stats = -1;

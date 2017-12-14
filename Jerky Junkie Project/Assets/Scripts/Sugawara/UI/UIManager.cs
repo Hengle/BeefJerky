@@ -24,6 +24,8 @@ public class UIManager : MonoBehaviour {
 	[SerializeField] private AnimationScore animationScore = null; //スコアテキストのアニメーションを行うスクリプト
 	[SerializeField] private CutInAnimation cutInAnimation = null;
 
+	[SerializeField] private Text highScoreText = null;
+
 	[SerializeField] private Transform cutInParent = null;
 	[SerializeField] private GameObject cutInPrefab = null;
 	[SerializeField] private Vector3 cutInPos = Vector3.zero;
@@ -58,6 +60,12 @@ public class UIManager : MonoBehaviour {
 	{
 		animationScore.AnimationPlay(saveScore,score); //直前のスコア、現在のスコアを渡す
 		saveScore = score; //現在のスコアを保存
+	}
+
+	public void HighScoreUpdate()
+	{
+		highScoreText.color = new Color(255,255,0);
+		//音を鳴らす
 	}
 
 	public void PlayCutIn()
