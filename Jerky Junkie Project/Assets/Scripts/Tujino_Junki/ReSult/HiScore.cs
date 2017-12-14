@@ -11,8 +11,10 @@ public class HiScore : SingletonMonoBehaviour<HiScore> {
 
 	public UIManager uIManager;
 
+	public GameObject stars;
 
-    private int score;// スコア
+
+    [SerializeField] private int score;// スコア
 
 	public int Score
 	{
@@ -57,10 +59,13 @@ public class HiScore : SingletonMonoBehaviour<HiScore> {
         if (highScore < score)// スコアがハイスコアより大きければ
         {
             highScore = score;//更新
+			stars.SetActive(true);
+			ResultHighScoreText.color = new Color(255,255,0);
+
         }
 
-        ResultScoreText.text = score.ToString();//リザルトのスコア表示
-        ResultHighScoreText.text = highScore.ToString();//リザルトのハイスコア表示
+        ResultScoreText.text = " " + score.ToString();//リザルトのスコア表示
+        ResultHighScoreText.text =  " " + highScore.ToString();//リザルトのハイスコア表示
     }
 
 

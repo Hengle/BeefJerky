@@ -25,33 +25,22 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 	public List<Character> characterPrefabs;
 	[SerializeField]
 	public Character beefjarkeyPrefab;
+    [SerializeField]
+    private Character OzisanPrefab;
+    [SerializeField]
+    private int OzisanCount;
 
     private bool updateFlag;
     public bool stopFlag;
 
-    //演出などの待機するべき処理がいくつ実行中か　０になった時、おじさんとジャーキーの組み合わせなどを確認する
-    [SerializeField]
-    private int _count;
+    
     public void MoveStart() {
-        _count++;
-        isWaiting = true;
+        //isWaiting = true;
     }
     [SerializeField]
     private bool isMoveEnd = true;
     public void MoveEnd() {
-        _count--;
         isMoveEnd = true;
-    }
-    [SerializeField]
-    private bool isWaiting;
-    public bool isMoveWaitEnd {
-        get {
-            if (isWaiting && _count == 0) {
-                isWaiting = false;
-                return true;
-            }
-            return false;
-        }
     }
 
 
@@ -61,10 +50,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
         backGroundStage = InitStage(true);
         CharacterInit(Stage);
         CharacterInit(backGroundStage,true);
-        //CharacterManager2.Instance.CharactersDateInitialize(characterPrefabs);
-        //foreach (Character c in characterPrefabs) {
-        //    Debug.Log(c.data.m_DropType);
-        //}
+        OzisanInit();
 	}
 
     private void Update()
@@ -78,7 +64,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
             foreach (StageChip chip in backGroundStage)
             {
                 if (chip.holdCharacter == null)
-                    chip.AddCharacter(InitCharacter(true));
+                    chip.AddCharacter(InitRandCharacter(true));
             }
         }
         if (isMoveEnd) {
@@ -161,6 +147,19 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
         return stage;
     }
 
+    private void OzisanInit() {
+        while (OzisanCount < ConstData.OZISAN_INSTANCE_MAX) {
+            Debug.Log(OzisanCount);
+            bool isBack = Random.Range(0, 2) == 0;
+            int x = Random.Range(0, Stage.GetLength(0)), y = Random.Range(0, Stage.GetLength(1));
+            StageChip targetChip = (isBack ? backGroundStage : Stage)[x, y];
+            if (targetChip.holdCharacter.data.m_DropType != DropType.ozisan) {
+                DeleteCharacter(targetChip.holdCharacter);
+                targetChip.AddCharacter(InitCharacter(OzisanPrefab, isBack),true);
+            }
+        }
+    }
+
     /// <summary>
     /// Characterをステージ一杯に生成する処理
     /// </summary>
@@ -176,14 +175,6 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     /// 一番下の行のCharacterを全て削除する
     /// </summary>
     public void DeleteDownLineCharacter() {
-        //int line = Stage.GetLength(1) - 1;
-        //int length = Stage.GetLength(0);
-        //for (int i = 0; i < length; i++) {
-        //    if (Stage[i, line].stayCharacter) {
-        //        DeleteCharacter(Stage[i, line].stayCharacter);
-        //        DeleteCharacter(Stage[i, line - 1].stayCharacter);
-        //    }
-        //}
         foreach (StageChip chip in Stage) {
             if (chip.holdCharacter) {
                 DeleteCharacter(chip.holdCharacter);
@@ -196,6 +187,12 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     /// </summary>
     /// <param name="target"></param>
     public void DeleteCharacter(Character target) {
+        switch (target.data.m_DropType)
+        {
+            case DropType.ozisan:
+                OzisanCount--;
+                break;
+        }
         Destroy(target.gameObject);
         updateFlag = true;
     }
@@ -222,18 +219,65 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
             }
         }
     }
+
     /// <summary>
     /// Characterを生成する処理
     /// </summary>
+    /// <param name="isBack"></param>
+    /// <param name="excepts">生成したくないキャラクターのタイプ</param>
     /// <returns></returns>
-    private Character InitCharacter(bool isBack = false) {
-        Character chara = Instantiate(characterPrefabs[Random.Range(0, characterPrefabs.Count)]);
-        if (isBack) {
+    private Character InitCharacter(bool isBack = false,params DropType[] excepts) {
+        List<Character> list = new List<Character>(characterPrefabs);
+        Character prefab;
+        int i = 0;
+        bool ReplaceFlag;
+        do
+        {
+            prefab = list[Random.Range(0, list.Count)];
+            ReplaceFlag = false;
+            foreach (DropType t in excepts)
+            {
+                if (prefab.data.m_DropType == t)
+                {
+                    ReplaceFlag = true;
+                    list.Remove(prefab);
+                    break;
+                }
+            }
+        }
+        while (ReplaceFlag && i++ < 100);
+        Debug.Log(i);
+        
+        return InitCharacter(prefab, isBack);
+    }
+
+    public Character InitCharacter(Character prefab,bool isBack = false) {
+        Character chara = Instantiate(prefab);
+        if (isBack){
             chara.transform.SetParent(CharacterBackParent.transform);
         }
         else
             chara.transform.SetParent(CharacterParent.transform);
+        
+        switch (chara.data.m_DropType) {
+            case DropType.ozisan:
+                OzisanCount++;
+                break;
+        }
         return chara;
+    }
+
+    public Character InitRandCharacter(bool isBack = false) {
+        //おじさんが少なければ、おじさんの数に応じた割合でおじさんを生成する
+        if (Random.Range(0, ConstData.OZISAN_INSTANCE_MAX) > OzisanCount) {
+            return InitCharacter(OzisanPrefab, isBack);
+        }
+        return InitCharacter(characterPrefabs[Random.Range(0, characterPrefabs.Count)], isBack);
+    }
+
+    public Character ChangeCharacterType(Character origin) {
+        
+        return origin;
     }
 
     /// <summary>
@@ -280,6 +324,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
                 if (backGroundStage[x, backGroundStage.GetLength(1) - 1].holdCharacter)
                 {
                     backGroundStage[x, backGroundStage.GetLength(1) - 1].holdCharacter.transform.SetParent(CharacterParent.transform);
+
                     Stage[x, y].MoveCharacter(backGroundStage[x, backGroundStage.GetLength(1) - 1]);
                 }
                 else {
@@ -337,7 +382,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 	{
 		StageChip output = null;
 		foreach (StageChip _output in Stage) {
-			if (_output.holdCharacter.gameObject == checkMapObj) {
+			if (_output.holdCharacter && _output.holdCharacter.gameObject == checkMapObj) {
 				output = _output;
 				break;
 			}

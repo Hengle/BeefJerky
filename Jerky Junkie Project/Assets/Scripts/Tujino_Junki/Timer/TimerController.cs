@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 //空のゲームオブジェクトに割り当てて利用
-public class TimerController : MonoBehaviour {
+public class TimerController : SingletonMonoBehaviour<TimerController> {
 
     public float TimerCnt = 60.0f;
 
@@ -91,6 +91,8 @@ public class TimerController : MonoBehaviour {
         
 
     }
-    
-    
+
+    public void AddTime(float value) {
+        TimerCnt += value;
+    }
 }
