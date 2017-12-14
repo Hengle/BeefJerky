@@ -215,7 +215,7 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
             //_y = (_y < 0 ? 0 : (_y >= StageManager.Instance.StageLength[1] ? StageManager.Instance.StageLength[1] - 1 : _y));
 
             if (StageManager.Instance.Stage[_x, _y].character == null) continue;
-            Character chara = objList.Find(z => z == StageManager.Instance.Stage[_x, _y].holdCharacter.gameObject);
+            Character chara = objList.Find(z => z == StageManager.Instance.Stage[_x, _y].holdCharacter);
             //探索先が同タイプでリストに含まれていない場合、探索先をリストに含めた後さらにそこから探索を開始する
             if (chara == null && StageManager.Instance.Stage[_x, _y].holdCharacter.data.m_DropType == type) {
                 StageManager.Instance.Stage[_x, _y].character.isChecked = true;

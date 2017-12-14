@@ -12,7 +12,12 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
     [SerializeField]
     List<Character> saveList = new List<Character>();
 
-    public Color ChangeColor;
+    public Color ChangeColor { get {
+			if (saveList.Count >= 12) return Color.yellow;
+			if (saveList.Count >= 8) return Color.cyan;
+			if (saveList.Count >= 4) return Color.black;
+			return Color.grey;
+		} }
 	[SerializeField]
 	Sprite[] image;
 
@@ -52,6 +57,11 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
 
             SaveListClear();
         }
+
+		if (!Input.GetMouseButton(0))
+		{
+			obj = null;
+		}
     }
 
     /// <summary>
@@ -190,19 +200,33 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
             for (int i = num + 1; i < saveList.Count; i++) {
                 RemoveColorChange(saveList[i]);
             }
-            saveList.RemoveRange(num + 1, saveList.Count - (num + 1));
+			for (int i = num + 1; i < saveList.Count; i++) {
+				RemoveSaveList(saveList[i]);
+			}
+            //saveList.RemoveRange(num + 1, saveList.Count - (num + 1));
+
         }
     }
 
+	private void UpdateColor()
+	{
+		foreach (Character obj in saveList) {
+			ColorChange(obj);
+		}
+	}
+
     private void RemoveSaveList(Character target) {
-        if (saveList.Remove(target))
-            RemoveColorChange(target);
+		if (saveList.Remove(target)) {
+			UpdateColor();
+			RemoveColorChange(target);
+		}
+            
     }
 
     private void AddSaveList(Character target) {
         saveList.Add(target);
-        ColorChange(target);
-    }
+		UpdateColor();
+	}
 
     private void SaveListClear() {
         foreach (Character obj in saveList) {

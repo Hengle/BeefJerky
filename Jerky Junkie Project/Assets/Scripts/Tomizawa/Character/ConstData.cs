@@ -6,4 +6,5 @@ public class ConstData : MonoBehaviour {
 
     public const int OZISAN_INSTANCE_MAX = 6;
     public const float COMBO_LIMIT_TIME = 1.0f;
+	public const float Gravity_WaitTIme = 0.25f;
 }

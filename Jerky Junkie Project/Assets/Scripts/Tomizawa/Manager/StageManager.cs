@@ -38,6 +38,8 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     private bool updateFlag;
     public bool stopFlag;
 
+	private float GravityWaitTime;
+
     
     public void MoveStart() {
         //isWaiting = true;
@@ -63,6 +65,11 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
         if (Time.timeScale == 0 || stopFlag) return;
         //キャラクターが削除された時など、必要な時のみ処理する
         if (updateFlag) {
+			if(GravityWaitTime > 0)
+			{
+				GravityWaitTime -= Time.deltaTime;
+				return;
+			}
             updateFlag = false;
             GravityUpdate();
             
@@ -85,7 +92,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
         }
         for (int i = 0; i < Stage.GetLength(0); i++) {
             for (int j = 0; j < Stage.GetLength(1); j++) {
-                if (Stage[i,j].character && (Stage[i, j].character.data.m_DropType == DropType.ozisan)) {
+                if (Stage[i,j].character && (Stage[i, j].character.data.m_DropType == DropType.ozisan || Stage[i, j].character.data.m_DropType == DropType.biru)) {
                     List<Character> characters = new List<Character>() { Stage[i, j].character };
                     CharacterManager2.Instance.Combination(characters, Stage[i, j].character.data.m_DropType, i, j);
                 }
@@ -192,6 +199,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
                 break;
         }
         Destroy(target.gameObject);
+		GravityWaitTime = ConstData.Gravity_WaitTIme;
         updateFlag = true;
     }
 
