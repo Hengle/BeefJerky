@@ -180,6 +180,9 @@ public class DropInput : MonoBehaviour {
 						SaveObj.RemoveAt (j);
 					}*/
 
+					Debug.Log ("hid");
+				
+
 		}
 	}
 

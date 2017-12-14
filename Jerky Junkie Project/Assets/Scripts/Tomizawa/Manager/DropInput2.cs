@@ -24,25 +24,20 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
             return obj;
         else return null;
     }
-
-    private bool isButtonUp;
+    
     private void Update()
     {
-        if (Time.timeScale == 0) {
-            if (Input.GetMouseButtonUp(0)) isButtonUp = true;
-            return;
-        }
         if (Input.GetMouseButton(0))
         {
             RayhitDrop();
         }
-        if (Input.GetMouseButtonUp(0) || isButtonUp)
+        if (Input.GetMouseButtonUp(0))
         {
             InputFlg = ChangeFlg = comboFlg = stopper = false;
             nowX = nowY = 0;
             //SaveObj.Clear ();
         }
-        if (Input.GetMouseButtonUp(0) || isButtonUp)
+        if (Input.GetMouseButtonUp(0))
         {
             //CharacterManager2.Instance.RootDestoryInstance(saveList);
             nowX = nowY = 0;
@@ -51,7 +46,6 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
 
             SaveListClear();
         }
-        isButtonUp = false;
     }
 
     /// <summary>

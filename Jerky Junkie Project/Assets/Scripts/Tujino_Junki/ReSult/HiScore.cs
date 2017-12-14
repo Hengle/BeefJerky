@@ -4,16 +4,29 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class HiScore : SingletonMonoBehaviour<HiScore> {
-        
-    public Text scoreText;// スコアを表示する
-    
-    public Text highScoreText;// ハイスコアを表示する
 
     public Text ResultScoreText;//リザルトのスコア表示
 
     public Text ResultHighScoreText;//リザルトのハイスコア表示
 
+	public UIManager uIManager;
+
+
     private int score;// スコア
+
+	public int Score
+	{
+		get
+		{
+			return score;
+		}
+		set
+		{
+			score = value;
+			uIManager.ScoreUpdate(score);
+			uIManager.PlayCutIn();
+		}
+	}
 
     private int highScore = 0;// ハイスコア
 
@@ -51,13 +64,13 @@ public class HiScore : SingletonMonoBehaviour<HiScore> {
 
     private void TextDraw()
     {
-        scoreText.text = score.ToString();// スコア・ハイスコアを表示する
-        highScoreText.text = highScore.ToString();
+    //    scoreText.text = score.ToString();// スコア・ハイスコアを表示する
+    //    highScoreText.text = highScore.ToString();
     }
 
     public void AddPoint(int point) //引数で得たポイントを追加
     {
-        score = score + point;
+        Score = score + point;
     }
 
     public void Save() // ハイスコアの保存 リザルトを抜ける時に呼び出す
