@@ -232,6 +232,9 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
                 //Debug.Log(score);
                 HiScore.Instance.AddPoint(score);
 
+                float time = 2 + (jakiCount - 1) * 0.5f;
+                TimerController.Instance.AddTime(time);
+
                 RootDestoryInstance(characters);
                 break;
             case DropType.biru:
