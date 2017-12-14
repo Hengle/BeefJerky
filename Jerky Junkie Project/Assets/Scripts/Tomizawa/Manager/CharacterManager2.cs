@@ -202,6 +202,7 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
     /// <param name="characters"></param>
     /// <param name="type"></param>
     public void Combination(List<GameObject> characters, DropType type, int x = 0,int y = 0) {
+        int score = 0;
         switch (type) {
             case DropType.usi:
                 break;
@@ -228,9 +229,8 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
                 //    if (c.GetComponent<Character>().data.m_DropType == DropType.biru) biruCount++;
                 //}
 
-                int score = (5000 + (jakiCount > 4 ? 3000 + (jakiCount - 4) * 500 : (jakiCount - 1) * 1000));//* (1 + biruCount / 10);
+                score = (5000 + (jakiCount - 1) * 1000);//* (1 + biruCount / 10);
                 //Debug.Log(score);
-                HiScore.Instance.AddPoint(score);
 
                 float time = 2 + (jakiCount - 1) * 0.5f;
                 TimerController.Instance.AddTime(time);
@@ -241,12 +241,16 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
                 if (StageManager.Instance.Stage[x, y].character.isChecked) break;
                 search(DropType.biru, characters, x, y);
                 if (characters.Count >= 4) {
+                    score = characters.Count * 500 - 1000;
                     RootDestoryInstance(characters);
                 }
                 break;
             case DropType.jaki:
             default:
                 break;
+        }
+        if (score > 0) {
+            HiScore.Instance.AddPoint(score);
         }
     }
 

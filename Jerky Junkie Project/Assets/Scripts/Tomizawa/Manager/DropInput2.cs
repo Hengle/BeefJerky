@@ -27,6 +27,11 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
     
     private void Update()
     {
+        if (Time.timeScale == 0) return;
+
+        if (saveList.Count > 0 && saveList[0] == null) {
+            SaveListClear();
+        }
         if (Input.GetMouseButton(0))
         {
             RayhitDrop();
@@ -101,8 +106,8 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
 			if (saveList.Count != 0 && !ChangeFlg) {
 
 				// 他のマスに移動していれば(最初の入力で受け取ったオブジェクトと違うオブジェクトを選択していたら)実行 //ドロップの入れ替え処理
-				if (saveList [0] == obj)
-					return;
+				/*if (saveList [0] == obj)
+					return;*/
 
 				if (saveList.Count == 0 || ChangeFlg)
 					return;
@@ -140,16 +145,16 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
 						}
                      // コンボ中に削除対象から外れてしまったら実行
                     else if (!CharacterManager2.Instance.getObjFlg (num [0], num [1]) && comboFlg) {
-						if (saveList.Count > 1) {
+						//if (saveList.Count > 1) {
 							ComboDestroyCheck ();
 
                             SaveListClear();//saveList.Clear ();
 
 							stopper = true;
-						} else {
-							//CharacterManager2.Instance.DirectionObjMove (nowX, nowY, num [0], num [1]);
+						//} else {
+						//	CharacterManager2.Instance.DirectionObjMove (nowX, nowY, num [0], num [1]);
 
-						}
+						//}
 					 }
                       // 削除対象以外を選択時実行
                       else{
