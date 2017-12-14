@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HiScore : MonoBehaviour {
+public class HiScore : SingletonMonoBehaviour<HiScore> {
 
     public Text ResultScoreText;//リザルトのスコア表示
 
     public Text ResultHighScoreText;//リザルトのハイスコア表示
 
 	public UIManager uIManager;
+
 
     private int score;// スコア
 
@@ -23,6 +24,7 @@ public class HiScore : MonoBehaviour {
 		{
 			score = value;
 			uIManager.ScoreUpdate(score);
+			uIManager.PlayCutIn();
 		}
 	}
 
