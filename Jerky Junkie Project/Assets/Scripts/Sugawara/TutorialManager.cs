@@ -12,7 +12,9 @@ public class TutorialManager : MonoBehaviour {
 
 	[SerializeField] private TimerController timerController = null;
 
-	private int phase;
+    public TitleProductionTiming titleProductionTiming = null;//SEを管理しているスクリプトを取得
+
+    private int phase;
 
 	void Start () {
 
@@ -21,6 +23,8 @@ public class TutorialManager : MonoBehaviour {
 		panels[1].SetActive(false);
 
 		Invoke("ButtonMake",buttonSpeed);
+
+        titleProductionTiming.GayaSE();//ガヤの音を流す
 	}
 
 	private void ButtonMake()

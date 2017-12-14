@@ -18,9 +18,20 @@ public class TitleProductionTiming : MonoBehaviour {
     {
         SoundManager.Instance.PlaySE("GameStart");
     }
+
+    public void CowCrySE()
+    {
+        SoundManager.Instance.PlaySE("CowCry");//牛の鳴き声
+    }
     //
 
     //シーン「メイン」の中でのみ使用
+
+    public void GayaSE()//居酒屋のガヤ
+    {
+        SoundManager.Instance.PlaySE("OSSANGaya");
+    }
+
     public void CountDownSE()            //カウントダウン。スタート前の３２１と終わる間近の５４３２１    現状。ピッの単音を入れる予定。まだ音を手に入れてない。
     {
         SoundManager.Instance.PlaySE("CountDown");
