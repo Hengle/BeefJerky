@@ -23,10 +23,17 @@ public class TimerController : SingletonMonoBehaviour<TimerController> {
     [SerializeField] Result result = null;
 
     private int countStart = 0;
+
+	private bool started = false;
 	// Use this for initialization
 	void Start () {
         //countDown.CountDownStart(true, StartWaitTime);
-        StartCoroutine(TimerCount());//一秒を計算する
+        //StartCoroutine(TimerCount());//一秒を計算する
+	}
+
+	public void GameStart()
+	{
+		StartCoroutine(TimerCount());//一秒を計算する
 	}
 
     IEnumerator TimerCount()
@@ -39,7 +46,8 @@ public class TimerController : SingletonMonoBehaviour<TimerController> {
             Debug.Log("１秒経過");
             yield return new WaitForSeconds(1.0f);
         }
-    }
+		started = true;
+	}
 
 	// Update is called once per frame
 	void Update () {
@@ -59,12 +67,14 @@ public class TimerController : SingletonMonoBehaviour<TimerController> {
 
         Timer();
         uiManager.TimeUpdate(TimerCnt);
-    }
+
+	}
 
 
-    private void Timer()
+	private void Timer()
     {
-
+		if (!started)
+			return;
 
         TimerCnt -= Time.deltaTime;//タイマーを進める
 

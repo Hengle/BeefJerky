@@ -80,8 +80,10 @@ public class UIManager : MonoBehaviour {
 	/// </summary>
 	public void Pause()
 	{
-		pause = !pause; //ポーズ状態を反転
-		windowMove.MoveOn(pause); //現在のポーズ状態を渡すと、それに対応したアニメーションをWindowMoveスクリプトで実行
+		if (ResultManager.Instance.isResult)
+			return;
+			pause = !pause; //ポーズ状態を反転
+			windowMove.MoveOn(pause); //現在のポーズ状態を渡すと、それに対応したアニメーションをWindowMoveスクリプトで実行
 		if (pause) //ポーズ状態になった時
 		{
 			pauseButtonImage.sprite = pauseButtonSprite[1]; //ポーズボタンを停止に変える

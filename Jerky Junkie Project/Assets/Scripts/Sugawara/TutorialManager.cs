@@ -10,6 +10,8 @@ public class TutorialManager : MonoBehaviour {
 
 	[SerializeField] private float buttonSpeed = 0.5f; //パネル表示からボタンが出てくるまでの時間
 
+	[SerializeField] private TimerController timerController = null;
+
 	private int phase;
 
 	void Start () {
@@ -28,9 +30,18 @@ public class TutorialManager : MonoBehaviour {
 
 	public void ButtonPush(int num)
 	{
-		if(num == 0)
+		phase++;
+		
+		if(phase == 1)
 		{
-			phase++
+			panels[0].SetActive(false);
+			panels[1].SetActive(true);
+			Invoke("ButtonMake", buttonSpeed);
+		}
+		else if(phase == 2)
+		{
+			timerController.GameStart();
+			Destroy(this.gameObject);
 		}
 	}
 

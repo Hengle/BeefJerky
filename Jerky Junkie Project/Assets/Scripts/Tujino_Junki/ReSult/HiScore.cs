@@ -60,7 +60,6 @@ public class HiScore : SingletonMonoBehaviour<HiScore> {
         {
             highScore = score;//更新
 			stars.SetActive(true);
-			ResultHighScoreText.color = new Color(255,255,0);
 
         }
 

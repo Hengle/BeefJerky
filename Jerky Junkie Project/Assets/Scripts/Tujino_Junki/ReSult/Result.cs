@@ -10,6 +10,8 @@ public class Result : MonoBehaviour {
 
     public void OnResult()
     {
+        ResultManager.Instance.ResultOn();//リザルトを開いた状態にする
+
         ResultCanvas = GameObject.Find("ResultCanvas");//ResultCanvasを検索
 
 		windowMove.MoveOn(true);

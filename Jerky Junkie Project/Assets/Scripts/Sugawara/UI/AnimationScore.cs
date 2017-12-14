@@ -15,11 +15,6 @@ public class AnimationScore: MonoBehaviour
 
 	private int animStats = 0; 
 
-	private void Start()
-	{
-		scoreText = scoreTextTransform.GetComponent<Text>();
-	}
-
 	private void Update()
 	{
 		if(animStats != 0)
@@ -52,7 +47,7 @@ public class AnimationScore: MonoBehaviour
 			int updateValue = (int)((endScore - startScore) * timeRate + startScore);
 
 			// テキストの更新
-			scoreText.text = "Score:" + updateValue.ToString("D6");
+			scoreText.text = updateValue.ToString("D3");
 
 			// 1フレーム待つ
 			yield return null;
@@ -60,7 +55,7 @@ public class AnimationScore: MonoBehaviour
 		} while (Time.time < endTime);
 
 		// 最終的な着地のスコア
-		scoreText.text = "Score:" + endScore.ToString("D6");
+			scoreText.text = endScore.ToString("D3");
 	}
 
 	private void TextAnimation()

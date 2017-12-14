@@ -16,11 +16,14 @@ public class FadeManager : SingletonMonoBehaviour<FadeManager>
 	{
 		if(this != Instance)
 		{
-			Destroy(this);
+			Destroy(this.gameObject);
 			return;
 		}
 
-		DontDestroyOnLoad (this.gameObject);    //オブジェクトを破棄しない.
+
+        DontDestroyOnLoad(this.gameObject);    //オブジェクトを破棄しない.
+        
+
 
 		StartCoroutine(Pixel());
 	}
@@ -64,9 +67,11 @@ public class FadeManager : SingletonMonoBehaviour<FadeManager>
             //DownBGM (fade_playFLg);//音の再生
             yield return 0;
 		}
-		
-		//シーン切替
-		SceneManager.LoadScene(SceneName);//引数で得た名前のシーンに遷移
+
+        ResultManager.Instance.ResultOff();//シーン切り替え時にリザルトフラグを下げる
+
+        //シーン切替
+        SceneManager.LoadScene(SceneName);//引数で得た名前のシーンに遷移
 		
 		//だんだん明るく
 		time = 0;
