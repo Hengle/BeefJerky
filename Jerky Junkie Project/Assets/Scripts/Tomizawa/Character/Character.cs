@@ -49,14 +49,14 @@ public class Character : MonoBehaviour {
             StageManager.Instance.MoveEnd();
         }
 
-        while (Vector2.Distance(transform.position, pos) > 0.5f)
+        while (Vector2.Distance(transform.position, pos) > 5f)
         {
             if (Time.timeScale == 0 || StageManager.Instance.stopFlag) {
                 yield return null;
                 moveEndWaitTime -= Time.deltaTime;
                 continue;
             }
-            transform.position = Vector2.Lerp(transform.position, pos, 0.1f);
+            transform.position = Vector2.Lerp(transform.position, pos,0.075f);
             yield return null;
             moveEndWaitTime -= Time.deltaTime;
         }
@@ -67,6 +67,7 @@ public class Character : MonoBehaviour {
         }
 
         StageManager.Instance.MoveEnd();
+		transform.position = pos;
         move = null;
         moveEndWaitTime = 0;
     }

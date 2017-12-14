@@ -10,7 +10,7 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
     bool comboFlg, stopper;
 
     [SerializeField]
-    List<GameObject> saveList = new List<GameObject>();
+    List<Character> saveList = new List<Character>();
 
     public Color ChangeColor;
 
@@ -28,6 +28,11 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
     private void Update()
     {
         if (Time.timeScale == 0) return;
+        /*
+        foreach (Character obj in saveList) {
+            if (obj.move != null)
+                SaveListClear();
+        }*/
 
         if (saveList.Count > 0 && saveList[0] == null) {
             SaveListClear();
@@ -39,12 +44,6 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
         if (Input.GetMouseButtonUp(0))
         {
             InputFlg = ChangeFlg = comboFlg = stopper = false;
-            nowX = nowY = 0;
-            //SaveObj.Clear ();
-        }
-        if (Input.GetMouseButtonUp(0))
-        {
-            //CharacterManager2.Instance.RootDestoryInstance(saveList);
             nowX = nowY = 0;
 
 			ComboDestroyCheck ();
@@ -90,7 +89,7 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
             {
                 // ヒットオブジェクトを格納
                 //saveList.Clear();
-                AddSaveList(StageManager.Instance.Stage[num[0], num[1]].holdCharacter.gameObject); //saveList.Add(StageManager.Instance.Stage[num[0], num[1]].holdCharacter.gameObject);
+                AddSaveList(StageManager.Instance.Stage[num[0], num[1]].holdCharacter); //saveList.Add(StageManager.Instance.Stage[num[0], num[1]].holdCharacter.gameObject);
                 nowX = num[0];
                 nowY = num[1];
 
@@ -115,7 +114,7 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
 				int[] num = GetCharacterNumber (obj);
 
 				// 他のマスに移動していれば実行
-				GameObject findSaveObj = saveList.Find (x => x == obj);
+				Character findSaveObj = saveList.Find (x => x.gameObject == obj);
 				if (findSaveObj != null) {
 					CheckSaveObj (findSaveObj);
 					return;
@@ -140,7 +139,7 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
 
 					// 削除対象オブジェクトを選択していれば実行
 					if (CharacterManager2.Instance.getObjFlg (num [0], num [1]) && comboFlg) {
-                        AddSaveList(StageManager.Instance.Stage[num[0], num[1]].holdCharacter.gameObject);//saveList.Add (StageManager.Instance.Stage [num [0], num [1]].holdCharacter.gameObject);
+                        AddSaveList(StageManager.Instance.Stage[num[0], num[1]].holdCharacter);//saveList.Add (StageManager.Instance.Stage [num [0], num [1]].holdCharacter.gameObject);
 							//Debug.Log (obj);
 						}
                      // コンボ中に削除対象から外れてしまったら実行
@@ -177,19 +176,10 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
 
 	void ComboDestroyCheck()
 	{
-		if (saveList.Count >= 4)
-		{
-			GameObject beefjarkey = saveList [saveList.Count - 1];
-            RemoveSaveList(saveList[saveList.Count - 1]);//saveList.RemoveAt (saveList.Count - 1);
-
-			Debug.Log (beefjarkey);
-			CharacterManager2.Instance.RootDestoryInstance(saveList);
-
-			StageManager.Instance.CreateBeefjarkey (beefjarkey);
-		}
+        CharacterManager2.Instance.Combination(saveList, DropType.usi);
 	}
 
-    void CheckSaveObj(GameObject target)
+    void CheckSaveObj(Character target)
     {
         // 保存されているオブジェクトの数が2つあれば実行
         if (saveList.Count >= 2) {
@@ -202,30 +192,30 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
         }
     }
 
-    private void RemoveSaveList(GameObject target) {
+    private void RemoveSaveList(Character target) {
         if (saveList.Remove(target))
             RemoveColorChange(target);
     }
 
-    private void AddSaveList(GameObject target) {
+    private void AddSaveList(Character target) {
         saveList.Add(target);
         ColorChange(target);
     }
 
     private void SaveListClear() {
-        foreach (GameObject obj in saveList) {
+        foreach (Character obj in saveList) {
             RemoveColorChange(obj);
         }
         saveList.Clear();
     }
 
-    private GameObject ColorChange(GameObject target) {
+    private Character ColorChange(Character target) {
         if (!target) return null;
         target.GetComponent<Image>().color = ChangeColor;
         return target;
     }
 
-    private GameObject RemoveColorChange(GameObject target) {
+    private Character RemoveColorChange(Character target) {
         if (!target) return null;
         target.GetComponent<Image>().color = Color.white;
         return target;

@@ -21,14 +21,19 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
     private StageChip StageChipPrefab;
     [SerializeField]
     private Vector2 chipSze;//,offset;//余白は無し
+
     [SerializeField]
-	public List<Character> characterPrefabs;
+    public CharactersData CharaData;
+    [SerializeField]
+    public List<Character> characterPrefabs { get{ return CharaData.CharacetrPrefab; } }
 	[SerializeField]
-	public Character beefjarkeyPrefab;
+    public Character beefjarkeyPrefab { get{ return CharaData.Jakis[0]; } }
     [SerializeField]
-    private Character OzisanPrefab;
+    private Character OzisanPrefab { get{ return CharaData.Ozisan; } }
     [SerializeField]
     private int OzisanCount;
+    [SerializeField]
+    private int score;//おじさんを消した数
 
     private bool updateFlag;
     public bool stopFlag;
@@ -60,36 +65,28 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
         if (updateFlag) {
             updateFlag = false;
             GravityUpdate();
-
+            
             foreach (StageChip chip in backGroundStage)
             {
                 if (chip.holdCharacter == null)
                     chip.AddCharacter(InitRandCharacter(true));
             }
         }
-        if (isMoveEnd) {
+        if (isMoveEnd || Input.GetMouseButtonDown(0)) {
             CombinationUpdate();
             isMoveEnd = false;
         }
-        /*
-        if (isMoveWaitEnd) {
-            CombinationUpdate();
-            Debug.Log("waitEnd");
-        }
-        /*
-        if (Input.GetKeyDown(KeyCode.Space)) {
-            //おじさんとジャーキーの隣合わせ確認用
-            Debug.Log("enter");
-            CombinationUpdate();
-        }*/
     }
 
     //ステージに配置されているキャラクターの組み合わせ確認
     public void CombinationUpdate() {
+        foreach (StageChip chip in Stage) {
+            if (chip.character) chip.character.isChecked = false;
+        }
         for (int i = 0; i < Stage.GetLength(0); i++) {
             for (int j = 0; j < Stage.GetLength(1); j++) {
-                if (Stage[i,j].character && (Stage[i, j].character.data.m_DropType == DropType.ozisan || Stage[i,j].character.data.m_DropType == DropType.biru)) {
-                    List<GameObject> characters = new List<GameObject>() { Stage[i, j].character.gameObject };
+                if (Stage[i,j].character && (Stage[i, j].character.data.m_DropType == DropType.ozisan)) {
+                    List<Character> characters = new List<Character>() { Stage[i, j].character };
                     CharacterManager2.Instance.Combination(characters, Stage[i, j].character.data.m_DropType, i, j);
                 }
             }
@@ -149,7 +146,6 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 
     private void OzisanInit() {
         while (OzisanCount < ConstData.OZISAN_INSTANCE_MAX) {
-            Debug.Log(OzisanCount);
             bool isBack = Random.Range(0, 2) == 0;
             int x = Random.Range(0, Stage.GetLength(0)), y = Random.Range(0, Stage.GetLength(1));
             StageChip targetChip = (isBack ? backGroundStage : Stage)[x, y];
@@ -191,6 +187,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
         {
             case DropType.ozisan:
                 OzisanCount--;
+                StageManager.Instance.score++;
                 break;
         }
         Destroy(target.gameObject);
@@ -378,11 +375,11 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
             DeleteCharacter(Stage[Random.Range(0, Stage.GetLength(0)), Random.Range(0, Stage.GetLength(1))].holdCharacter);
     }
 
-	public StageChip GetStageChip(GameObject checkMapObj)
+	public StageChip GetStageChip(Character checkMapObj)
 	{
 		StageChip output = null;
 		foreach (StageChip _output in Stage) {
-			if (_output.holdCharacter && _output.holdCharacter.gameObject == checkMapObj) {
+			if (_output.holdCharacter && _output.holdCharacter == checkMapObj) {
 				output = _output;
 				break;
 			}
@@ -401,17 +398,31 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 		}
 	}
 
-	public void CreateBeefjarkey(GameObject checkMapObj)
+	public void CreateBeefjarkey(Character character,int deleteJakiCount)
 	{
-		StageChip _stageChip;
-		_stageChip = GetStageChip (checkMapObj);
-		Debug.Log (_stageChip.holdCharacter);
-		DeleteCharacter(_stageChip.holdCharacter);
+        //StageChip _stageChip;
+        StageChip stageChip = Stage[character.data.path[0], character.data.path[1]];// GetStageChip (character);
+		DeleteCharacter(character);
 
-        Character beef = Instantiate(beefjarkeyPrefab);//CharacterManager2.Instance.CreateCharacter ((int)DropType.jaki);
-        _stageChip.AddCharacter(beef, true, 0.8f);
-        //Debug.Log(_stageChip.character + ":" + _stageChip.character.gameObject.activeInHierarchy);
-		beef.transform.SetParent (CharacterParent.transform);
-		//SetStageChip (_stageChip);
+        Character beef = null;
+        if (deleteJakiCount >= 15) {
+            beef = Instantiate(CharaData.Jakis[3]);
+        }
+        if (deleteJakiCount >= 11)
+        {
+            beef = Instantiate(CharaData.Jakis[2]);
+        }
+        else if (deleteJakiCount >= 7)
+        {
+            beef = Instantiate(CharaData.Jakis[1]);
+        }
+        else {
+            beef = Instantiate(CharaData.Jakis[0]);
+        }
+
+        if (beef == null) return;
+        stageChip.AddCharacter(beef, true, 1.0f);
+
+        beef.transform.SetParent (CharacterParent.transform);
 	}
 }
