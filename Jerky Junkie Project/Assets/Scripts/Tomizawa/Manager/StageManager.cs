@@ -246,6 +246,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
             }
         }
         while (ReplaceFlag && i++ < 100);
+        Debug.Log(i);
         
         return InitCharacter(prefab, isBack);
     }
