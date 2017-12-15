@@ -390,7 +390,7 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
 					{
 						EffectManager.Instance.PlayEffect("Beell", new Vector2(c.transform.position.x, c.transform.position.y), .5f);
 					}
-					SoundManager.Instance.PlaySE(""); //ビールが消える音
+					SoundManager.Instance.PlaySE("OSSANAscension"); //ビールが消える音
 					RootDestoryInstance(characters);
 				}
 				break;

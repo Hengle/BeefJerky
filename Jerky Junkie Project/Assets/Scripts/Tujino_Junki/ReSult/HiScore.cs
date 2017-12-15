@@ -63,8 +63,8 @@ public class HiScore : SingletonMonoBehaviour<HiScore> {
 
         }
 
-        ResultScoreText.text = " " + score.ToString();//リザルトのスコア表示
-        ResultHighScoreText.text =  " " + highScore.ToString();//リザルトのハイスコア表示
+        ResultScoreText.text = " " + score.ToString("D4");//リザルトのスコア表示
+        ResultHighScoreText.text =  " " + highScore.ToString("D4");//リザルトのハイスコア表示
     }
 
 
