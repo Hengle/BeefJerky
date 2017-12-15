@@ -34,7 +34,7 @@ public class DropInput2 : SingletonMonoBehaviour<DropInput2> {
     
     private void Update()
     {
-        if (Time.timeScale == 0) return;
+        if (Time.timeScale == 0 || PauseManager.Instance.isPause) return;
         /*
         foreach (Character obj in saveList) {
             if (obj.move != null)

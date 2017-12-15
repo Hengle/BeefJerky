@@ -38,7 +38,8 @@ public class TimerController : SingletonMonoBehaviour<TimerController> {
 
     IEnumerator TimerCount()
     {
-        while(countStart<4)
+        PauseManager.Instance.PauseOn();
+        while (countStart<4)
         {
             countDown.CountDownStart(true, StartWaitTime);
             countStart++;
@@ -47,6 +48,7 @@ public class TimerController : SingletonMonoBehaviour<TimerController> {
             yield return new WaitForSeconds(1.0f);
         }
 		started = true;
+        PauseManager.Instance.PauseOff();
 	}
 
 	// Update is called once per frame
@@ -93,6 +95,7 @@ public class TimerController : SingletonMonoBehaviour<TimerController> {
 
         if (TimerCnt < -2.0f)//タイマーが０より下回ったら
         {
+            PauseManager.Instance.PauseOn();
             TimerCnt = -2.0f;//０のままに
 
             result.OnResult();//リザルトの起動

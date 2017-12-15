@@ -9,11 +9,13 @@ public class ResultManager : SingletonMonoBehaviour<ResultManager>//シングル
 	public void ResultOn()//リザルトを開くときに
 	{
 		isResult = true;//フラグを立てる
+        PauseManager.Instance.PauseOn();
 	}
 
 	public void ResultOff()//リザルトを閉じる時に
 	{
 		isResult = false;//フラグを下す
-	}
+        PauseManager.Instance.PauseOff();
+    }
 
 }
