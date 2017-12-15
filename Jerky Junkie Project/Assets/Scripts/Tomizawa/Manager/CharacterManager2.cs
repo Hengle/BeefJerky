@@ -335,6 +335,16 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
                 JakiSearch(characters, x, y);
                 
                 List<Character> charas = new List<Character>(characters);
+                Character ozisan = null;
+                foreach (Character c in characters) {
+                    if (c.data.m_DropType == DropType.ozisan) {
+                        ozisan = c;
+                        break;
+                    }
+                }
+
+                if (ozisan) characters.Remove(ozisan);
+
                 //ジャーキーの数
                 int jakiCount = 0;
                 foreach (Character c in charas) {
@@ -362,10 +372,14 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
                     }
                 }
                 if (jakiCount == 0) break;//ジャーキーが無ければ消さない
-                Debug.Log(characters.Count);
+
+                if (characters.Find(z => z == ozisan) == null) {
+                    characters.Add(ozisan);
+                }
+
                 //AddTime(2 + (jakiCount - 1) * 0.5f);
 
-				foreach(Character c in characters)
+				foreach (Character c in characters)
 				{
 					if(c.data.m_DropType == DropType.ozisan)
 					{
@@ -399,8 +413,8 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
     /// 時間延長処理
     /// </summary>
     /// <param name="value"></param>
-    private void AddTime(float value) {
-        TimerController.Instance.AddTime(value * comboBonus);
+    public void AddTime(float value) {
+        TimerController.Instance.AddTime(value);
     }
     /*
     /// <summary>
