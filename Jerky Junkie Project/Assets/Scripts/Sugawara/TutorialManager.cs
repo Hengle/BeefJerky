@@ -7,6 +7,7 @@ public class TutorialManager : MonoBehaviour {
 
 	[SerializeField] private GameObject[] panels;
 	[SerializeField] private GameObject[] buttons;
+	[SerializeField] private GameObject[] arrows;
 
 	[SerializeField] private float buttonSpeed = 0.5f; //パネル表示からボタンが出てくるまでの時間
 
@@ -28,7 +29,7 @@ public class TutorialManager : MonoBehaviour {
 		panels[0].SetActive(true);
 		panels[1].SetActive(false);
 
-		Invoke("ButtonMake",buttonSpeed);
+		//Invoke("ButtonMake",buttonSpeed);
 
         
 	}
@@ -36,13 +37,23 @@ public class TutorialManager : MonoBehaviour {
 	private void ButtonMake()
 	{
 
-        buttons[phase].SetActive(true);
-    }
+        //buttons[phase].SetActive(true);
+		//arrows[phase].SetActive(true);
+
+	}
 
 	public void ButtonPush(int num)
 	{
-		phase++;
-        if (phase == 1)
+		SoundManager.Instance.PlaySE("Bottan");
+		phase = num;
+		if (phase == 0)
+		{
+
+			panels[1].SetActive(false);
+			panels[0].SetActive(true);
+			Invoke("ButtonMake", buttonSpeed);
+		}
+		else if (phase == 1)
 		{
             
             panels[0].SetActive(false);
@@ -52,7 +63,8 @@ public class TutorialManager : MonoBehaviour {
 		else if(phase == 2)
 		{
             SoundManager.Instance.StopBGM("GayaBGM");
-            Debug.Log("ガヤ停止");
+			SoundManager.Instance.PlayBGM("GameBGM");
+			Debug.Log("ガヤ停止");
             timerController.GameStart();
 			Destroy(this.gameObject);
 		}

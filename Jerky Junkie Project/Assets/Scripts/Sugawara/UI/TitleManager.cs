@@ -13,6 +13,7 @@ public class TitleManager : MonoBehaviour
 
 	private void Awake()
 	{
+		SoundManager.Instance.PlayBGM("TitleBGM");
 		fadeManager = transform.Find("SceneFade").GetComponent<FadeManager>();
 	}
 

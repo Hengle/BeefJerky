@@ -326,6 +326,7 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
 					{
 						EffectManager.Instance.PlayEffect("Jarkey", new Vector2(c.transform.position.x, c.transform.position.y), .5f);
 					}
+					SoundManager.Instance.PlaySE("BeefjerkyCreate"); //ジャーキーができる音
                 }
                 break;
             case DropType.ozisan:
@@ -362,6 +363,7 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
                     }
                 }
                 if (jakiCount == 0) break;//ジャーキーが無ければ消さない
+				SoundManager.Instance.PlaySE("");
                 Debug.Log(characters.Count);
                 //AddTime(2 + (jakiCount - 1) * 0.5f);
 
@@ -370,11 +372,13 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
 					if(c.data.m_DropType == DropType.ozisan)
 					{
 						EffectManager.Instance.PlayEffect("Ozisan", new Vector2(c.transform.position.x, c.transform.position.y), 1f);
+
 					}
 					EffectManager.Instance.PlayEffect("OzisanEmission", new Vector2(c.transform.position.x, c.transform.position.y), .5f);
 				}
+				SoundManager.Instance.PlaySE("OSSANAscension"); //おっさん昇天の音
 
-                RootDestoryInstance(characters);
+				RootDestoryInstance(characters);
                 break;
             case DropType.biru:
 
@@ -386,6 +390,7 @@ public class CharacterManager2 : SingletonMonoBehaviour<CharacterManager2> {
 					{
 						EffectManager.Instance.PlayEffect("Beell", new Vector2(c.transform.position.x, c.transform.position.y), .5f);
 					}
+					SoundManager.Instance.PlaySE(""); //ビールが消える音
 					RootDestoryInstance(characters);
 				}
 				break;
