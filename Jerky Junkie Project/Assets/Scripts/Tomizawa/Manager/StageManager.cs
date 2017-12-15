@@ -282,6 +282,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
         switch (chara.data.m_DropType) {
             case DropType.ozisan:
                 OzisanCount++;
+                CharacterManager2.Instance.AddTime(1);
                 break;
         }
         return chara;
